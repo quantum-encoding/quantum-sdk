@@ -113,6 +113,36 @@ type MusicClip struct {
 	Index int `json:"index"`
 }
 
+// SoundEffectRequest is the request body for sound effects generation.
+type SoundEffectRequest struct {
+	// Prompt describes the sound effect to generate.
+	Prompt string `json:"prompt"`
+
+	// DurationSeconds is the optional target duration in seconds.
+	DurationSeconds float64 `json:"duration_seconds,omitempty"`
+}
+
+// SoundEffectResponse is the response from sound effects generation.
+type SoundEffectResponse struct {
+	// AudioBase64 is the base64-encoded audio data.
+	AudioBase64 string `json:"audio_base64"`
+
+	// Format is the audio format (e.g. "mp3").
+	Format string `json:"format"`
+
+	// SizeBytes is the audio file size.
+	SizeBytes int `json:"size_bytes"`
+
+	// Model is the model used for generation.
+	Model string `json:"model"`
+
+	// CostTicks is the total cost in ticks.
+	CostTicks int64 `json:"cost_ticks"`
+
+	// RequestID is the unique request identifier.
+	RequestID string `json:"request_id"`
+}
+
 // Speak generates speech from text.
 func (c *Client) Speak(ctx context.Context, req *TTSRequest) (*TTSResponse, error) {
 	var resp TTSResponse
@@ -133,6 +163,22 @@ func (c *Client) Speak(ctx context.Context, req *TTSRequest) (*TTSResponse, erro
 func (c *Client) Transcribe(ctx context.Context, req *STTRequest) (*STTResponse, error) {
 	var resp STTResponse
 	meta, err := c.doJSON(ctx, "POST", "/qai/v1/audio/stt", req, &resp)
+	if err != nil {
+		return nil, err
+	}
+	if resp.CostTicks == 0 {
+		resp.CostTicks = meta.CostTicks
+	}
+	if resp.RequestID == "" {
+		resp.RequestID = meta.RequestID
+	}
+	return &resp, nil
+}
+
+// SoundEffects generates sound effects from a text prompt.
+func (c *Client) SoundEffects(ctx context.Context, req *SoundEffectRequest) (*SoundEffectResponse, error) {
+	var resp SoundEffectResponse
+	meta, err := c.doJSON(ctx, "POST", "/qai/v1/audio/sound-effects", req, &resp)
 	if err != nil {
 		return nil, err
 	}

@@ -24,6 +24,12 @@ type ImageRequest struct {
 
 	// OutputFormat is the image format (e.g. "png", "jpeg", "webp").
 	OutputFormat string `json:"output_format,omitempty"`
+
+	// Style is the style preset (e.g. "vivid", "natural"). DALL-E 3 specific.
+	Style string `json:"style,omitempty"`
+
+	// Background is the background mode (e.g. "auto", "transparent", "opaque"). GPT-Image specific.
+	Background string `json:"background,omitempty"`
 }
 
 // ImageResponse is the response from image generation.
