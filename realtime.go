@@ -68,7 +68,95 @@ type RealtimeReceiver struct {
 	conn *websocket.Conn
 }
 
-// RealtimeConnect opens a realtime voice session via WebSocket.
+// RealtimeSession is the response from POST /qai/v1/realtime/session.
+type RealtimeSession struct {
+	EphemeralToken string `json:"ephemeral_token"`
+	URL            string `json:"url"`
+	SessionID      string `json:"session_id"`
+}
+
+// RealtimeSession requests an ephemeral token from the QAI proxy for direct xAI voice connection.
+// Call this before RealtimeConnectDirect to get a scoped token.
+func (c *Client) RealtimeSession(ctx context.Context) (*RealtimeSession, error) {
+	var resp RealtimeSession
+	_, err := c.doJSON(ctx, "POST", "/qai/v1/realtime/session", map[string]any{}, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// RealtimeEnd finalizes billing for a direct voice session.
+// Call after disconnecting from the direct xAI WebSocket.
+func (c *Client) RealtimeEnd(ctx context.Context, sessionID string, durationSeconds int) error {
+	var resp json.RawMessage
+	_, err := c.doJSON(ctx, "POST", "/qai/v1/realtime/end", map[string]any{
+		"session_id":       sessionID,
+		"duration_seconds": durationSeconds,
+	}, &resp)
+	return err
+}
+
+// RealtimeRefresh refreshes an ephemeral token for long sessions (>4 min).
+// Returns a new ephemeral token string.
+func (c *Client) RealtimeRefresh(ctx context.Context, sessionID string) (string, error) {
+	var resp struct {
+		EphemeralToken string `json:"ephemeral_token"`
+	}
+	_, err := c.doJSON(ctx, "POST", "/qai/v1/realtime/refresh", map[string]any{
+		"session_id": sessionID,
+	}, &resp)
+	if err != nil {
+		return "", err
+	}
+	return resp.EphemeralToken, nil
+}
+
+// RealtimeConnectDirect connects directly to xAI's realtime API with an ephemeral token.
+// Much lower latency than the proxy path. Use RealtimeSession() first to get the token.
+func (c *Client) RealtimeConnectDirect(ctx context.Context, ephemeralToken string, config *RealtimeConfig) (*RealtimeSender, *RealtimeReceiver, error) {
+	return RealtimeConnectDirectTo(ctx, "wss://api.x.ai/v1/realtime", ephemeralToken, config)
+}
+
+// RealtimeConnectDirectTo connects to a specific WebSocket URL with a token.
+func RealtimeConnectDirectTo(ctx context.Context, wsURL, token string, config *RealtimeConfig) (*RealtimeSender, *RealtimeReceiver, error) {
+	if config == nil {
+		config = &RealtimeConfig{}
+	}
+	if config.Voice == "" {
+		config.Voice = "Sal"
+	}
+	if config.SampleRate == 0 {
+		config.SampleRate = 24000
+	}
+
+	headers := http.Header{}
+	headers.Set("Authorization", "Bearer "+token)
+
+	connectCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+
+	conn, _, err := websocket.Dial(connectCtx, wsURL, &websocket.DialOptions{
+		HTTPHeader: headers,
+	})
+	if err != nil {
+		return nil, nil, fmt.Errorf("qai: realtime direct connect: %w", err)
+	}
+
+	conn.SetReadLimit(16 * 1024 * 1024)
+
+	sender := &RealtimeSender{conn: conn}
+	receiver := &RealtimeReceiver{conn: conn}
+
+	if err := sendSessionUpdate(ctx, sender, config); err != nil {
+		conn.Close(websocket.StatusNormalClosure, "")
+		return nil, nil, err
+	}
+
+	return sender, receiver, nil
+}
+
+// RealtimeConnect opens a realtime voice session via the QAI proxy WebSocket.
 // Returns (sender, receiver) for bidirectional communication.
 func (c *Client) RealtimeConnect(ctx context.Context, config *RealtimeConfig) (*RealtimeSender, *RealtimeReceiver, error) {
 	if config == nil {
@@ -106,13 +194,20 @@ func (c *Client) RealtimeConnect(ctx context.Context, config *RealtimeConfig) (*
 	sender := &RealtimeSender{conn: conn}
 	receiver := &RealtimeReceiver{conn: conn}
 
-	// Send session.update
+	if err := sendSessionUpdate(ctx, sender, config); err != nil {
+		conn.Close(websocket.StatusNormalClosure, "")
+		return nil, nil, err
+	}
+
+	return sender, receiver, nil
+}
+
+func sendSessionUpdate(ctx context.Context, sender *RealtimeSender, config *RealtimeConfig) error {
 	tools := config.Tools
 	if tools == nil {
 		tools = []json.RawMessage{}
 	}
-
-	sessionUpdate := map[string]any{
+	return sender.sendJSON(ctx, map[string]any{
 		"type": "session.update",
 		"session": map[string]any{
 			"voice":              config.Voice,
@@ -127,14 +222,7 @@ func (c *Client) RealtimeConnect(ctx context.Context, config *RealtimeConfig) (*
 			},
 			"tools": tools,
 		},
-	}
-
-	if err := sender.sendJSON(ctx, sessionUpdate); err != nil {
-		conn.Close(websocket.StatusNormalClosure, "")
-		return nil, nil, fmt.Errorf("qai: realtime session.update: %w", err)
-	}
-
-	return sender, receiver, nil
+	})
 }
 
 // SendAudio sends a base64-encoded PCM audio chunk.
