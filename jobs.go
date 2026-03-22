@@ -229,3 +229,72 @@ func (c *Client) StreamJob(ctx context.Context, jobID string) (<-chan JobStreamE
 
 	return ch, nil
 }
+
+// RemeshRequest describes a 3D remesh operation.
+type RemeshRequest struct {
+	InputTaskID       string   `json:"input_task_id,omitempty"`
+	ModelURL          string   `json:"model_url,omitempty"`
+	TargetFormats     []string `json:"target_formats,omitempty"`
+	Topology          string   `json:"topology,omitempty"`
+	TargetPolycount   int      `json:"target_polycount,omitempty"`
+	ResizeHeight      float64  `json:"resize_height,omitempty"`
+	OriginAt          string   `json:"origin_at,omitempty"`
+	ConvertFormatOnly bool     `json:"convert_format_only,omitempty"`
+}
+
+// RigRequest describes a 3D rigging operation for a humanoid model.
+type RigRequest struct {
+	InputTaskID     string  `json:"input_task_id,omitempty"`
+	ModelURL        string  `json:"model_url,omitempty"`
+	HeightMeters    float64 `json:"height_meters,omitempty"`
+	TextureImageURL string  `json:"texture_image_url,omitempty"`
+}
+
+// AnimateRequest describes an animation operation on a rigged character.
+type AnimateRequest struct {
+	RigTaskID   string       `json:"rig_task_id"`
+	ActionID    int          `json:"action_id"`
+	PostProcess *PostProcess `json:"post_process,omitempty"`
+}
+
+// PostProcess describes post-processing options for animation.
+type PostProcess struct {
+	OperationType string `json:"operation_type"`
+	FPS           int    `json:"fps,omitempty"`
+}
+
+// Remesh submits a 3D remesh job and polls until completion.
+func (c *Client) Remesh(ctx context.Context, req *RemeshRequest) (*JobStatusResponse, error) {
+	params, _ := json.Marshal(req)
+	var p map[string]any
+	json.Unmarshal(params, &p)
+	job, err := c.CreateJob(ctx, "3d/remesh", p)
+	if err != nil {
+		return nil, err
+	}
+	return c.PollJob(ctx, job.JobID, 5*time.Second, 120)
+}
+
+// Rig submits a 3D rigging job and polls until completion.
+func (c *Client) Rig(ctx context.Context, req *RigRequest) (*JobStatusResponse, error) {
+	params, _ := json.Marshal(req)
+	var p map[string]any
+	json.Unmarshal(params, &p)
+	job, err := c.CreateJob(ctx, "3d/rig", p)
+	if err != nil {
+		return nil, err
+	}
+	return c.PollJob(ctx, job.JobID, 5*time.Second, 120)
+}
+
+// Animate submits a 3D animation job and polls until completion.
+func (c *Client) Animate(ctx context.Context, req *AnimateRequest) (*JobStatusResponse, error) {
+	params, _ := json.Marshal(req)
+	var p map[string]any
+	json.Unmarshal(params, &p)
+	job, err := c.CreateJob(ctx, "3d/animate", p)
+	if err != nil {
+		return nil, err
+	}
+	return c.PollJob(ctx, job.JobID, 5*time.Second, 120)
+}
