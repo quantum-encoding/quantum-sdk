@@ -298,3 +298,28 @@ func (c *Client) Animate(ctx context.Context, req *AnimateRequest) (*JobStatusRe
 	}
 	return c.PollJob(ctx, job.JobID, 5*time.Second, 120)
 }
+
+// RetextureRequest describes a retexture operation on a 3D model.
+type RetextureRequest struct {
+	InputTaskID      string   `json:"input_task_id,omitempty"`
+	ModelURL         string   `json:"model_url,omitempty"`
+	TextStylePrompt  string   `json:"text_style_prompt,omitempty"`
+	ImageStyleURL    string   `json:"image_style_url,omitempty"`
+	AIModel          string   `json:"ai_model,omitempty"`
+	EnableOriginalUV *bool    `json:"enable_original_uv,omitempty"`
+	EnablePBR        *bool    `json:"enable_pbr,omitempty"`
+	RemoveLighting   *bool    `json:"remove_lighting,omitempty"`
+	TargetFormats    []string `json:"target_formats,omitempty"`
+}
+
+// Retexture submits a retexture job and polls until completion.
+func (c *Client) Retexture(ctx context.Context, req *RetextureRequest) (*JobStatusResponse, error) {
+	params, _ := json.Marshal(req)
+	var p map[string]any
+	json.Unmarshal(params, &p)
+	job, err := c.CreateJob(ctx, "3d/retexture", p)
+	if err != nil {
+		return nil, err
+	}
+	return c.PollJob(ctx, job.JobID, 5*time.Second, 120)
+}
