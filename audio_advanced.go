@@ -1,6 +1,10 @@
 package qai
 
-import "context"
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+)
 
 // DialogueRequest is the request body for multi-speaker dialogue generation.
 type DialogueRequest struct {
@@ -335,6 +339,66 @@ type StarfishTTSResponse struct {
 	RequestID string `json:"request_id"`
 }
 
+// ---------------------------------------------------------------------------
+// Advanced Music (ElevenLabs Eleven Music)
+// ---------------------------------------------------------------------------
+
+// MusicAdvancedRequest is the request body for advanced music generation.
+type MusicAdvancedRequest struct {
+	// Prompt describes the music to generate (required).
+	Prompt string `json:"prompt"`
+
+	// DurationSeconds is the target duration (optional).
+	DurationSeconds int `json:"duration_seconds,omitempty"`
+
+	// Model is the music generation model (optional).
+	Model string `json:"model,omitempty"`
+
+	// FinetuneID is the ID of a music finetune to use (optional).
+	FinetuneID string `json:"finetune_id,omitempty"`
+}
+
+// MusicAdvancedClip is a single clip from advanced music generation.
+type MusicAdvancedClip struct {
+	Base64 string `json:"base64"`
+	Format string `json:"format"`
+	Size   int64  `json:"size"`
+}
+
+// MusicAdvancedResponse is the response from advanced music generation.
+type MusicAdvancedResponse struct {
+	Clips     []MusicAdvancedClip `json:"clips"`
+	Model     string              `json:"model"`
+	CostTicks int64               `json:"cost_ticks"`
+	RequestID string              `json:"request_id"`
+}
+
+// MusicFinetuneInfo describes a music finetune.
+type MusicFinetuneInfo struct {
+	FinetuneID  string `json:"finetune_id"`
+	Name        string `json:"name"`
+	Description string `json:"description,omitempty"`
+	Status      string `json:"status"`
+	ModelID     string `json:"model_id,omitempty"`
+	CreatedAt   string `json:"created_at,omitempty"`
+}
+
+// MusicFinetuneListResponse is the response from listing finetunes.
+type MusicFinetuneListResponse struct {
+	Finetunes []MusicFinetuneInfo `json:"finetunes"`
+}
+
+// MusicFinetuneCreateRequest is the request body for creating a finetune.
+type MusicFinetuneCreateRequest struct {
+	Name        string   `json:"name"`
+	Description string   `json:"description,omitempty"`
+	Samples     []string `json:"samples"`
+}
+
+// ---------------------------------------------------------------------------
+// Client methods
+// ---------------------------------------------------------------------------
+
 // Dialogue generates multi-speaker dialogue audio from a script.
 func (c *Client) Dialogue(ctx context.Context, req *DialogueRequest) (*DialogueResponse, error) {
 	var resp DialogueResponse
@@ -461,4 +525,47 @@ func (c *Client) StarfishTTS(ctx context.Context, req *StarfishTTSRequest) (*Sta
 		resp.RequestID = meta.RequestID
 	}
 	return &resp, nil
+}
+
+// GenerateMusicAdvanced generates music via ElevenLabs Eleven Music (advanced).
+func (c *Client) GenerateMusicAdvanced(ctx context.Context, req *MusicAdvancedRequest) (*MusicAdvancedResponse, error) {
+	var resp MusicAdvancedResponse
+	meta, err := c.doJSON(ctx, "POST", "/qai/v1/audio/music/advanced", req, &resp)
+	if err != nil {
+		return nil, err
+	}
+	if resp.CostTicks == 0 {
+		resp.CostTicks = meta.CostTicks
+	}
+	if resp.RequestID == "" {
+		resp.RequestID = meta.RequestID
+	}
+	return &resp, nil
+}
+
+// ListFinetunes returns all music finetunes for the authenticated user.
+func (c *Client) ListFinetunes(ctx context.Context) (*MusicFinetuneListResponse, error) {
+	var resp MusicFinetuneListResponse
+	_, err := c.doJSON(ctx, "GET", "/qai/v1/audio/finetunes", nil, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateFinetune creates a new music finetune from audio samples (base64-encoded).
+func (c *Client) CreateFinetune(ctx context.Context, req *MusicFinetuneCreateRequest) (*MusicFinetuneInfo, error) {
+	var resp MusicFinetuneInfo
+	_, err := c.doJSON(ctx, "POST", "/qai/v1/audio/finetunes", req, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteFinetune deletes a music finetune by ID.
+func (c *Client) DeleteFinetune(ctx context.Context, id string) error {
+	var resp json.RawMessage
+	_, err := c.doJSON(ctx, "DELETE", fmt.Sprintf("/qai/v1/audio/finetunes/%s", id), nil, &resp)
+	return err
 }

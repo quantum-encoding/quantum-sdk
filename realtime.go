@@ -72,14 +72,35 @@ type RealtimeReceiver struct {
 type RealtimeSession struct {
 	EphemeralToken string `json:"ephemeral_token"`
 	URL            string `json:"url"`
+	SignedURL      string `json:"signed_url"`
 	SessionID      string `json:"session_id"`
+	Provider       string `json:"provider"`
 }
 
-// RealtimeSession requests an ephemeral token from the QAI proxy for direct xAI voice connection.
+// WSURL returns the WebSocket URL, checking both url and signed_url fields.
+func (s *RealtimeSession) WSURL() string {
+	if s.SignedURL != "" {
+		return s.SignedURL
+	}
+	return s.URL
+}
+
+// RealtimeSession requests an ephemeral token from the QAI proxy for direct voice connection.
 // Call this before RealtimeConnectDirect to get a scoped token.
 func (c *Client) RealtimeSession(ctx context.Context) (*RealtimeSession, error) {
+	return c.RealtimeSessionFor(ctx, "")
+}
+
+// RealtimeSessionFor requests an ephemeral token for a specific provider.
+// Pass "xai" (default), "elevenlabs", etc. When provider is "elevenlabs", the
+// response contains a WebSocket proxy URL (signed_url) instead of an ephemeral token.
+func (c *Client) RealtimeSessionFor(ctx context.Context, provider string) (*RealtimeSession, error) {
+	body := map[string]any{}
+	if provider != "" {
+		body["provider"] = provider
+	}
 	var resp RealtimeSession
-	_, err := c.doJSON(ctx, "POST", "/qai/v1/realtime/session", map[string]any{}, &resp)
+	_, err := c.doJSON(ctx, "POST", "/qai/v1/realtime/session", body, &resp)
 	if err != nil {
 		return nil, err
 	}

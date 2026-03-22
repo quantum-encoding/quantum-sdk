@@ -93,3 +93,23 @@ func (c *Client) PollJob(ctx context.Context, jobID string, interval time.Durati
 		Error:  fmt.Sprintf("Job polling timed out after %d attempts", maxAttempts),
 	}, nil
 }
+
+// Generate3D submits a 3D model generation job via the async jobs system.
+// Returns the job creation response -- use PollJob to wait for completion.
+func (c *Client) Generate3D(ctx context.Context, model string, prompt string, imageURL string) (*JobCreateResponse, error) {
+	params := map[string]any{"model": model}
+	if prompt != "" {
+		params["prompt"] = prompt
+	}
+	if imageURL != "" {
+		params["image_url"] = imageURL
+	}
+	paramsJSON, err := json.Marshal(params)
+	if err != nil {
+		return nil, fmt.Errorf("qai: marshal 3d params: %w", err)
+	}
+	return c.CreateJob(ctx, &JobCreateRequest{
+		Type:   "3d/generate",
+		Params: paramsJSON,
+	})
+}
