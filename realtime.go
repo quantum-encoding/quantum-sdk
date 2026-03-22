@@ -398,3 +398,14 @@ func parseRealtimeEvent(data []byte) *RealtimeEvent {
 		return &RealtimeEvent{Type: EventUnknown, Raw: data}
 	}
 }
+
+// RealtimeSessionWith requests a realtime session with full configuration.
+// Pass voice, prompt, tools, etc. as a map for ElevenLabs ConvAI.
+func (c *Client) RealtimeSessionWith(ctx context.Context, body map[string]any) (*RealtimeSession, error) {
+	var session RealtimeSession
+	_, err := c.doJSON(ctx, "POST", "/qai/v1/realtime/session", body, &session)
+	if err != nil {
+		return nil, err
+	}
+	return &session, nil
+}
