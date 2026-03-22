@@ -1,9 +1,12 @@
 package qai
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strings"
 	"time"
 )
 
@@ -41,6 +44,30 @@ type JobStatusResponse struct {
 
 	// CostTicks is the total cost in ticks.
 	CostTicks int64 `json:"cost_ticks"`
+}
+
+// JobStreamEvent is a single event from an SSE job stream.
+type JobStreamEvent struct {
+	// Type is the event type ("progress", "complete", "error").
+	Type string `json:"type"`
+
+	// JobID is the job identifier.
+	JobID string `json:"job_id,omitempty"`
+
+	// Status is the current job status.
+	Status string `json:"status,omitempty"`
+
+	// Result is the job output (present on "complete" events).
+	Result json.RawMessage `json:"result,omitempty"`
+
+	// Error is the error message (present on "error" events).
+	Error string `json:"error,omitempty"`
+
+	// CostTicks is the total cost in ticks (present on "complete" events).
+	CostTicks int64 `json:"cost_ticks,omitempty"`
+
+	// CompletedAt is the completion timestamp.
+	CompletedAt string `json:"completed_at,omitempty"`
 }
 
 // CreateJob submits an async job and returns the job ID for polling.
@@ -112,4 +139,93 @@ func (c *Client) Generate3D(ctx context.Context, model string, prompt string, im
 		Type:   "3d/generate",
 		Params: paramsJSON,
 	})
+}
+
+// ChatJob submits a chat completion as an async job.
+//
+// Useful for long-running models (e.g. Opus) where synchronous /qai/v1/chat
+// may time out. Params are the same shape as ChatRequest.
+// Use StreamJob() or PollJob() to get the result.
+func (c *Client) ChatJob(ctx context.Context, req *ChatRequest) (*JobCreateResponse, error) {
+	paramsJSON, err := json.Marshal(req)
+	if err != nil {
+		return nil, fmt.Errorf("qai: marshal chat request: %w", err)
+	}
+	return c.CreateJob(ctx, &JobCreateRequest{
+		Type:   "chat",
+		Params: paramsJSON,
+	})
+}
+
+// StreamJob opens an SSE stream for a job, returning a channel of events.
+//
+// Events: "progress" (status update), "complete" (with result), "error".
+// The channel is closed when the stream ends or the context is cancelled.
+func (c *Client) StreamJob(ctx context.Context, jobID string) (<-chan JobStreamEvent, error) {
+	path := fmt.Sprintf("/qai/v1/jobs/%s/stream", jobID)
+	url := c.baseURL + path
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("qai: create request: %w", err)
+	}
+
+	req.Header.Set("Authorization", "Bearer "+c.apiKey)
+	req.Header.Set("Accept", "text/event-stream")
+
+	// Use a client without timeout for streaming — context controls cancellation.
+	streamClient := &http.Client{}
+	resp, err := streamClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("qai: GET %s: %w", path, err)
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		defer resp.Body.Close()
+		return nil, parseAPIError(resp, resp.Header.Get("X-QAI-Request-Id"))
+	}
+
+	ch := make(chan JobStreamEvent, 64)
+
+	go func() {
+		defer close(ch)
+		defer resp.Body.Close()
+
+		scanner := bufio.NewScanner(resp.Body)
+		scanner.Buffer(make([]byte, 0, 64*1024), 1024*1024)
+
+		for scanner.Scan() {
+			line := scanner.Text()
+
+			if !strings.HasPrefix(line, "data: ") {
+				continue
+			}
+			payload := strings.TrimPrefix(line, "data: ")
+
+			if payload == "[DONE]" {
+				return
+			}
+
+			var event JobStreamEvent
+			if err := json.Unmarshal([]byte(payload), &event); err != nil {
+				select {
+				case ch <- JobStreamEvent{Type: "error", Error: fmt.Sprintf("parse SSE: %v", err)}:
+				case <-ctx.Done():
+				}
+				return
+			}
+
+			select {
+			case ch <- event:
+			case <-ctx.Done():
+				return
+			}
+
+			if event.Type == "complete" || event.Type == "error" {
+				return
+			}
+		}
+	}()
+
+	return ch, nil
 }

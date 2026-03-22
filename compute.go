@@ -191,6 +191,51 @@ type SSHKeyRequest struct {
 	Username string `json:"username,omitempty"`
 }
 
+// BillingRequest is the request body for querying compute billing.
+type BillingRequest struct {
+	// InstanceID filters by instance ID.
+	InstanceID string `json:"instance_id,omitempty"`
+
+	// StartDate is the billing period start (ISO 8601).
+	StartDate string `json:"start_date,omitempty"`
+
+	// EndDate is the billing period end (ISO 8601).
+	EndDate string `json:"end_date,omitempty"`
+}
+
+// BillingEntry is a single billing line item.
+type BillingEntry struct {
+	// InstanceID is the instance identifier.
+	InstanceID string `json:"instance_id"`
+
+	// InstanceName is the instance name.
+	InstanceName string `json:"instance_name,omitempty"`
+
+	// CostUSD is the total cost in US dollars.
+	CostUSD float64 `json:"cost_usd"`
+
+	// UsageHours is the usage duration in hours.
+	UsageHours float64 `json:"usage_hours,omitempty"`
+
+	// SKUDescription is the SKU description (e.g. "N1 Predefined Instance Core").
+	SKUDescription string `json:"sku_description,omitempty"`
+
+	// StartTime is the billing period start.
+	StartTime string `json:"start_time,omitempty"`
+
+	// EndTime is the billing period end.
+	EndTime string `json:"end_time,omitempty"`
+}
+
+// BillingResponse is the response from a compute billing query.
+type BillingResponse struct {
+	// Entries is the list of billing line items.
+	Entries []BillingEntry `json:"entries"`
+
+	// TotalCostUSD is the total cost across all entries.
+	TotalCostUSD float64 `json:"total_cost_usd"`
+}
+
 // ComputeTemplates returns available machine configurations with pricing.
 func (c *Client) ComputeTemplates(ctx context.Context) (*TemplatesResponse, error) {
 	var resp TemplatesResponse
@@ -252,4 +297,14 @@ func (c *Client) ComputeSSHKey(ctx context.Context, id string, req *SSHKeyReques
 func (c *Client) ComputeKeepalive(ctx context.Context, id string) error {
 	_, err := c.doJSON(ctx, "POST", fmt.Sprintf("/qai/v1/compute/instance/%s/keepalive", id), nil, nil)
 	return err
+}
+
+// ComputeBilling queries compute billing from BigQuery via the QAI backend.
+func (c *Client) ComputeBilling(ctx context.Context, req *BillingRequest) (*BillingResponse, error) {
+	var resp BillingResponse
+	_, err := c.doJSON(ctx, "POST", "/qai/v1/compute/billing", req, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
