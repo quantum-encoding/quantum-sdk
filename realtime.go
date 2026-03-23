@@ -22,6 +22,8 @@ type RealtimeConfig struct {
 	SampleRate int `json:"sample_rate,omitempty"`
 	// Tool definitions (xAI Realtime API format).
 	Tools []json.RawMessage `json:"tools,omitempty"`
+	// Model to use for the realtime session (e.g. "gpt-4o-realtime-preview").
+	Model string `json:"model,omitempty"`
 }
 
 // RealtimeEvent is a parsed incoming event from the realtime API.
@@ -45,16 +47,16 @@ type RealtimeEvent struct {
 
 // Realtime event type constants.
 const (
-	EventSessionReady   = "session_ready"
-	EventAudioDelta     = "audio_delta"
+	EventSessionReady    = "session_ready"
+	EventAudioDelta      = "audio_delta"
 	EventTranscriptDelta = "transcript_delta"
-	EventTranscriptDone = "transcript_done"
-	EventSpeechStarted  = "speech_started"
-	EventSpeechStopped  = "speech_stopped"
-	EventFunctionCall   = "function_call"
-	EventResponseDone   = "response_done"
-	EventError          = "error"
-	EventUnknown        = "unknown"
+	EventTranscriptDone  = "transcript_done"
+	EventSpeechStarted   = "speech_started"
+	EventSpeechStopped   = "speech_stopped"
+	EventFunctionCall    = "function_call"
+	EventResponseDone    = "response_done"
+	EventError           = "error"
+	EventUnknown         = "unknown"
 )
 
 // RealtimeSender is the write half of a realtime session.
@@ -231,9 +233,9 @@ func sendSessionUpdate(ctx context.Context, sender *RealtimeSender, config *Real
 	return sender.sendJSON(ctx, map[string]any{
 		"type": "session.update",
 		"session": map[string]any{
-			"voice":              config.Voice,
-			"instructions":       config.Instructions,
-			"input_audio_format": "pcm16",
+			"voice":               config.Voice,
+			"instructions":        config.Instructions,
+			"input_audio_format":  "pcm16",
 			"output_audio_format": "pcm16",
 			"input_audio_transcription": map[string]any{
 				"model": "grok-2-audio",

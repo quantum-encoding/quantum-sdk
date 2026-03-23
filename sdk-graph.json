@@ -1,0 +1,7663 @@
+{
+  "sdks": [
+    {
+      "name": "go",
+      "language": "go",
+      "dir": ".",
+      "scanned_at": "2026-03-23T20:50:50.903942+01:00"
+    }
+  ],
+  "types": [
+    {
+      "sdk": "go",
+      "name": "BalanceResponse",
+      "kind": "struct",
+      "file": "account.go",
+      "fields": [
+        {
+          "name": "UserID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "user_id"
+        },
+        {
+          "name": "CreditTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "credit_ticks"
+        },
+        {
+          "name": "CreditUSD",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "credit_usd"
+        },
+        {
+          "name": "TicksPerUSD",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "ticks_per_usd"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "UsageEntry",
+      "kind": "struct",
+      "file": "account.go",
+      "fields": [
+        {
+          "name": "ID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "id"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "request_id"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model"
+        },
+        {
+          "name": "Provider",
+          "type": "string",
+          "optional": true,
+          "json_tag": "provider"
+        },
+        {
+          "name": "Endpoint",
+          "type": "string",
+          "optional": true,
+          "json_tag": "endpoint"
+        },
+        {
+          "name": "DeltaTicks",
+          "type": "int64",
+          "optional": true,
+          "json_tag": "delta_ticks"
+        },
+        {
+          "name": "BalanceAfter",
+          "type": "int64",
+          "optional": true,
+          "json_tag": "balance_after"
+        },
+        {
+          "name": "InputTokens",
+          "type": "int64",
+          "optional": true,
+          "json_tag": "input_tokens"
+        },
+        {
+          "name": "OutputTokens",
+          "type": "int64",
+          "optional": true,
+          "json_tag": "output_tokens"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "created_at"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "UsageResponse",
+      "kind": "struct",
+      "file": "account.go",
+      "fields": [
+        {
+          "name": "Entries",
+          "type": "[]UsageEntry",
+          "optional": false,
+          "json_tag": "entries"
+        },
+        {
+          "name": "HasMore",
+          "type": "bool",
+          "optional": false,
+          "json_tag": "has_more"
+        },
+        {
+          "name": "NextCursor",
+          "type": "string",
+          "optional": true,
+          "json_tag": "next_cursor"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "UsageQuery",
+      "kind": "struct",
+      "file": "account.go",
+      "fields": [
+        {
+          "name": "Limit",
+          "type": "int",
+          "optional": true,
+          "json_tag": "limit"
+        },
+        {
+          "name": "StartAfter",
+          "type": "string",
+          "optional": true,
+          "json_tag": "start_after"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "UsageSummaryMonth",
+      "kind": "struct",
+      "file": "account.go",
+      "fields": [
+        {
+          "name": "Month",
+          "type": "string",
+          "optional": false,
+          "json_tag": "month"
+        },
+        {
+          "name": "TotalRequests",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "total_requests"
+        },
+        {
+          "name": "TotalInputTokens",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "total_input_tokens"
+        },
+        {
+          "name": "TotalOutputTokens",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "total_output_tokens"
+        },
+        {
+          "name": "TotalCostUSD",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "total_cost_usd"
+        },
+        {
+          "name": "TotalMarginUSD",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "total_margin_usd"
+        },
+        {
+          "name": "ByProvider",
+          "type": "[]any",
+          "optional": true,
+          "json_tag": "by_provider"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "UsageSummaryResponse",
+      "kind": "struct",
+      "file": "account.go",
+      "fields": [
+        {
+          "name": "Months",
+          "type": "[]UsageSummaryMonth",
+          "optional": false,
+          "json_tag": "months"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "PricingEntry",
+      "kind": "struct",
+      "file": "account.go",
+      "fields": [
+        {
+          "name": "Provider",
+          "type": "string",
+          "optional": false,
+          "json_tag": "Provider"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "Model"
+        },
+        {
+          "name": "DisplayName",
+          "type": "string",
+          "optional": false,
+          "json_tag": "DisplayName"
+        },
+        {
+          "name": "InputPerMillion",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "InputPerMillion"
+        },
+        {
+          "name": "OutputPerMillion",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "OutputPerMillion"
+        },
+        {
+          "name": "CachedPerMillion",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "CachedPerMillion"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "PricingResponse",
+      "kind": "struct",
+      "file": "account.go",
+      "fields": [
+        {
+          "name": "Pricing",
+          "type": "map[string]PricingEntry",
+          "optional": false,
+          "json_tag": "pricing"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AgentRequest",
+      "kind": "struct",
+      "file": "agent.go",
+      "fields": [
+        {
+          "name": "SessionID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "session_id"
+        },
+        {
+          "name": "Task",
+          "type": "string",
+          "optional": false,
+          "json_tag": "task"
+        },
+        {
+          "name": "ConductorModel",
+          "type": "string",
+          "optional": true,
+          "json_tag": "conductor_model"
+        },
+        {
+          "name": "Workers",
+          "type": "[]AgentWorkerConfig",
+          "optional": true,
+          "json_tag": "workers"
+        },
+        {
+          "name": "MaxSteps",
+          "type": "int",
+          "optional": true,
+          "json_tag": "max_steps"
+        },
+        {
+          "name": "SystemPrompt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "system_prompt"
+        },
+        {
+          "name": "ContextConfig",
+          "type": "*ContextConfig",
+          "optional": true,
+          "json_tag": "context_config"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AgentWorker",
+      "kind": "struct",
+      "file": "agent.go",
+      "fields": [
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": false,
+          "json_tag": "name"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model"
+        },
+        {
+          "name": "Tier",
+          "type": "string",
+          "optional": true,
+          "json_tag": "tier"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": true,
+          "json_tag": "description"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AgentStreamEvent",
+      "kind": "struct",
+      "file": "agent.go",
+      "fields": [
+        {
+          "name": "EventType",
+          "type": "string",
+          "optional": false,
+          "json_tag": "type"
+        },
+        {
+          "name": "Data",
+          "type": "map[string]any",
+          "optional": true,
+          "json_tag": "data"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "MissionRequest",
+      "kind": "struct",
+      "file": "agent.go",
+      "fields": [
+        {
+          "name": "Goal",
+          "type": "string",
+          "optional": false,
+          "json_tag": "goal"
+        },
+        {
+          "name": "Strategy",
+          "type": "string",
+          "optional": true,
+          "json_tag": "strategy"
+        },
+        {
+          "name": "ConductorModel",
+          "type": "string",
+          "optional": true,
+          "json_tag": "conductor_model"
+        },
+        {
+          "name": "Workers",
+          "type": "map[string]MissionWorkerConfig",
+          "optional": true,
+          "json_tag": "workers"
+        },
+        {
+          "name": "MaxSteps",
+          "type": "int",
+          "optional": true,
+          "json_tag": "max_steps"
+        },
+        {
+          "name": "SystemPrompt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "system_prompt"
+        },
+        {
+          "name": "SessionID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "session_id"
+        },
+        {
+          "name": "DeploymentID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "deployment_id"
+        },
+        {
+          "name": "WorkerModel",
+          "type": "string",
+          "optional": true,
+          "json_tag": "worker_model"
+        },
+        {
+          "name": "BuildCommand",
+          "type": "string",
+          "optional": true,
+          "json_tag": "build_command"
+        },
+        {
+          "name": "WorkspacePath",
+          "type": "string",
+          "optional": true,
+          "json_tag": "workspace_path"
+        },
+        {
+          "name": "AutoPlan",
+          "type": "*bool",
+          "optional": true,
+          "json_tag": "auto_plan"
+        },
+        {
+          "name": "ContextConfig",
+          "type": "*ContextConfig",
+          "optional": true,
+          "json_tag": "context_config"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "MissionWorker",
+      "kind": "struct",
+      "file": "agent.go",
+      "fields": [
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model"
+        },
+        {
+          "name": "Tier",
+          "type": "string",
+          "optional": true,
+          "json_tag": "tier"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": true,
+          "json_tag": "description"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "TTSRequest",
+      "kind": "struct",
+      "file": "audio.go",
+      "fields": [
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "Text",
+          "type": "string",
+          "optional": false,
+          "json_tag": "text"
+        },
+        {
+          "name": "Voice",
+          "type": "string",
+          "optional": true,
+          "json_tag": "voice"
+        },
+        {
+          "name": "OutputFormat",
+          "type": "string",
+          "optional": true,
+          "json_tag": "format"
+        },
+        {
+          "name": "Speed",
+          "type": "*float64",
+          "optional": true,
+          "json_tag": "speed"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "TTSResponse",
+      "kind": "struct",
+      "file": "audio.go",
+      "fields": [
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        },
+        {
+          "name": "SizeBytes",
+          "type": "int",
+          "optional": false,
+          "json_tag": "size_bytes"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "STTRequest",
+      "kind": "struct",
+      "file": "audio.go",
+      "fields": [
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "Filename",
+          "type": "string",
+          "optional": true,
+          "json_tag": "filename"
+        },
+        {
+          "name": "Language",
+          "type": "string",
+          "optional": true,
+          "json_tag": "language"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "STTResponse",
+      "kind": "struct",
+      "file": "audio.go",
+      "fields": [
+        {
+          "name": "Text",
+          "type": "string",
+          "optional": false,
+          "json_tag": "text"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "MusicRequest",
+      "kind": "struct",
+      "file": "audio.go",
+      "fields": [
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "Prompt",
+          "type": "string",
+          "optional": false,
+          "json_tag": "prompt"
+        },
+        {
+          "name": "DurationSeconds",
+          "type": "int",
+          "optional": true,
+          "json_tag": "duration_seconds"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "MusicResponse",
+      "kind": "struct",
+      "file": "audio.go",
+      "fields": [
+        {
+          "name": "AudioClips",
+          "type": "[]MusicClip",
+          "optional": false,
+          "json_tag": "audio_clips"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "MusicClip",
+      "kind": "struct",
+      "file": "audio.go",
+      "fields": [
+        {
+          "name": "Base64Data",
+          "type": "string",
+          "optional": false,
+          "json_tag": "base64"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        },
+        {
+          "name": "SizeBytes",
+          "type": "int",
+          "optional": false,
+          "json_tag": "size_bytes"
+        },
+        {
+          "name": "Index",
+          "type": "int",
+          "optional": false,
+          "json_tag": "index"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SoundEffectRequest",
+      "kind": "struct",
+      "file": "audio.go",
+      "fields": [
+        {
+          "name": "Prompt",
+          "type": "string",
+          "optional": false,
+          "json_tag": "prompt"
+        },
+        {
+          "name": "DurationSeconds",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "duration_seconds"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SoundEffectResponse",
+      "kind": "struct",
+      "file": "audio.go",
+      "fields": [
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        },
+        {
+          "name": "SizeBytes",
+          "type": "int",
+          "optional": false,
+          "json_tag": "size_bytes"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AudioResponse",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": true,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": true,
+          "json_tag": "format"
+        },
+        {
+          "name": "SizeBytes",
+          "type": "int64",
+          "optional": true,
+          "json_tag": "size_bytes"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        },
+        {
+          "name": "Extra",
+          "type": "map[string]any",
+          "optional": true,
+          "json_tag": "extra"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "DialogueTurn",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Speaker",
+          "type": "string",
+          "optional": false,
+          "json_tag": "speaker"
+        },
+        {
+          "name": "Text",
+          "type": "string",
+          "optional": false,
+          "json_tag": "text"
+        },
+        {
+          "name": "Voice",
+          "type": "string",
+          "optional": true,
+          "json_tag": "voice"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "DialogueRequest",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Text",
+          "type": "string",
+          "optional": false,
+          "json_tag": "text"
+        },
+        {
+          "name": "Voices",
+          "type": "[]DialogueVoice",
+          "optional": false,
+          "json_tag": "voices"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model"
+        },
+        {
+          "name": "OutputFormat",
+          "type": "string",
+          "optional": true,
+          "json_tag": "output_format"
+        },
+        {
+          "name": "Seed",
+          "type": "int",
+          "optional": true,
+          "json_tag": "seed"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "DialogueVoice",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "VoiceID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "voice_id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": false,
+          "json_tag": "name"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "DialogueResponse",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        },
+        {
+          "name": "SizeBytes",
+          "type": "int",
+          "optional": false,
+          "json_tag": "size_bytes"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SpeechToSpeechRequest",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model"
+        },
+        {
+          "name": "VoiceID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "voice_id"
+        },
+        {
+          "name": "Voice",
+          "type": "string",
+          "optional": true,
+          "json_tag": "voice"
+        },
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "OutputFormat",
+          "type": "string",
+          "optional": true,
+          "json_tag": "format"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SpeechToSpeechResponse",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        },
+        {
+          "name": "SizeBytes",
+          "type": "int",
+          "optional": false,
+          "json_tag": "size_bytes"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "IsolateRequest",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "OutputFormat",
+          "type": "string",
+          "optional": true,
+          "json_tag": "format"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "IsolateVoiceRequest",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "Filename",
+          "type": "string",
+          "optional": true,
+          "json_tag": "filename"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "IsolateVoiceResponse",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        },
+        {
+          "name": "SizeBytes",
+          "type": "int",
+          "optional": false,
+          "json_tag": "size_bytes"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "RemixRequest",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "Voice",
+          "type": "string",
+          "optional": true,
+          "json_tag": "voice"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model"
+        },
+        {
+          "name": "OutputFormat",
+          "type": "string",
+          "optional": true,
+          "json_tag": "format"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "RemixVoiceRequest",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "Filename",
+          "type": "string",
+          "optional": true,
+          "json_tag": "filename"
+        },
+        {
+          "name": "Gender",
+          "type": "string",
+          "optional": true,
+          "json_tag": "gender"
+        },
+        {
+          "name": "Accent",
+          "type": "string",
+          "optional": true,
+          "json_tag": "accent"
+        },
+        {
+          "name": "Style",
+          "type": "string",
+          "optional": true,
+          "json_tag": "style"
+        },
+        {
+          "name": "Pacing",
+          "type": "string",
+          "optional": true,
+          "json_tag": "pacing"
+        },
+        {
+          "name": "AudioQuality",
+          "type": "string",
+          "optional": true,
+          "json_tag": "audio_quality"
+        },
+        {
+          "name": "PromptStrength",
+          "type": "string",
+          "optional": true,
+          "json_tag": "prompt_strength"
+        },
+        {
+          "name": "Script",
+          "type": "string",
+          "optional": true,
+          "json_tag": "script"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "RemixVoiceResponse",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": true,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        },
+        {
+          "name": "SizeBytes",
+          "type": "int",
+          "optional": false,
+          "json_tag": "size_bytes"
+        },
+        {
+          "name": "VoiceID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "voice_id"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "DubRequest",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": true,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "Filename",
+          "type": "string",
+          "optional": true,
+          "json_tag": "filename"
+        },
+        {
+          "name": "SourceURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "source_url"
+        },
+        {
+          "name": "TargetLanguage",
+          "type": "string",
+          "optional": false,
+          "json_tag": "target_language"
+        },
+        {
+          "name": "SourceLanguage",
+          "type": "string",
+          "optional": true,
+          "json_tag": "source_language"
+        },
+        {
+          "name": "SourceLang",
+          "type": "string",
+          "optional": true,
+          "json_tag": "source_lang"
+        },
+        {
+          "name": "TargetLang",
+          "type": "string",
+          "optional": true,
+          "json_tag": "target_lang"
+        },
+        {
+          "name": "NumSpeakers",
+          "type": "int",
+          "optional": true,
+          "json_tag": "num_speakers"
+        },
+        {
+          "name": "HighestResolution",
+          "type": "bool",
+          "optional": true,
+          "json_tag": "highest_resolution"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "DubResponse",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "DubbingID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "dubbing_id"
+        },
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        },
+        {
+          "name": "TargetLang",
+          "type": "string",
+          "optional": false,
+          "json_tag": "target_lang"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        },
+        {
+          "name": "ProcessingTimeSeconds",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "processing_time_seconds"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AlignRequest",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "Filename",
+          "type": "string",
+          "optional": true,
+          "json_tag": "filename"
+        },
+        {
+          "name": "Text",
+          "type": "string",
+          "optional": false,
+          "json_tag": "text"
+        },
+        {
+          "name": "Language",
+          "type": "string",
+          "optional": true,
+          "json_tag": "language"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AlignmentSegment",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Text",
+          "type": "string",
+          "optional": false,
+          "json_tag": "text"
+        },
+        {
+          "name": "Start",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "start"
+        },
+        {
+          "name": "End",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "end"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AlignResponse",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Segments",
+          "type": "[]AlignmentSegment",
+          "optional": true,
+          "json_tag": "segments"
+        },
+        {
+          "name": "Alignment",
+          "type": "[]AlignedWord",
+          "optional": false,
+          "json_tag": "alignment"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AlignedWord",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Text",
+          "type": "string",
+          "optional": false,
+          "json_tag": "text"
+        },
+        {
+          "name": "StartTime",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "start_time"
+        },
+        {
+          "name": "EndTime",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "end_time"
+        },
+        {
+          "name": "Confidence",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "confidence"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "VoiceDesignRequest",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": false,
+          "json_tag": "voice_description"
+        },
+        {
+          "name": "Text",
+          "type": "string",
+          "optional": false,
+          "json_tag": "sample_text"
+        },
+        {
+          "name": "OutputFormat",
+          "type": "string",
+          "optional": true,
+          "json_tag": "format"
+        },
+        {
+          "name": "VoiceDescription",
+          "type": "string",
+          "optional": false,
+          "json_tag": "-"
+        },
+        {
+          "name": "SampleText",
+          "type": "string",
+          "optional": false,
+          "json_tag": "-"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "VoiceDesignResponse",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Previews",
+          "type": "[]VoicePreview",
+          "optional": false,
+          "json_tag": "previews"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "VoicePreview",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "GeneratedVoiceID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "generated_voice_id"
+        },
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "StarfishTTSRequest",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Text",
+          "type": "string",
+          "optional": false,
+          "json_tag": "text"
+        },
+        {
+          "name": "Voice",
+          "type": "string",
+          "optional": true,
+          "json_tag": "voice"
+        },
+        {
+          "name": "VoiceID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "voice_id"
+        },
+        {
+          "name": "OutputFormat",
+          "type": "string",
+          "optional": true,
+          "json_tag": "format"
+        },
+        {
+          "name": "InputType",
+          "type": "string",
+          "optional": true,
+          "json_tag": "input_type"
+        },
+        {
+          "name": "Speed",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "speed"
+        },
+        {
+          "name": "Language",
+          "type": "string",
+          "optional": true,
+          "json_tag": "language"
+        },
+        {
+          "name": "Locale",
+          "type": "string",
+          "optional": true,
+          "json_tag": "locale"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "StarfishTTSResponse",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "AudioBase64",
+          "type": "string",
+          "optional": true,
+          "json_tag": "audio_base64"
+        },
+        {
+          "name": "URL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "url"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        },
+        {
+          "name": "SizeBytes",
+          "type": "int",
+          "optional": false,
+          "json_tag": "size_bytes"
+        },
+        {
+          "name": "Duration",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "duration"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "MusicSection",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "SectionType",
+          "type": "string",
+          "optional": false,
+          "json_tag": "section_type"
+        },
+        {
+          "name": "Lyrics",
+          "type": "string",
+          "optional": true,
+          "json_tag": "lyrics"
+        },
+        {
+          "name": "Style",
+          "type": "string",
+          "optional": true,
+          "json_tag": "style"
+        },
+        {
+          "name": "StyleExclude",
+          "type": "string",
+          "optional": true,
+          "json_tag": "style_exclude"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ElevenMusicRequest",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "Prompt",
+          "type": "string",
+          "optional": false,
+          "json_tag": "prompt"
+        },
+        {
+          "name": "Sections",
+          "type": "[]MusicSection",
+          "optional": true,
+          "json_tag": "sections"
+        },
+        {
+          "name": "DurationSeconds",
+          "type": "int",
+          "optional": true,
+          "json_tag": "duration_seconds"
+        },
+        {
+          "name": "Language",
+          "type": "string",
+          "optional": true,
+          "json_tag": "language"
+        },
+        {
+          "name": "Vocals",
+          "type": "*bool",
+          "optional": true,
+          "json_tag": "vocals"
+        },
+        {
+          "name": "Style",
+          "type": "string",
+          "optional": true,
+          "json_tag": "style"
+        },
+        {
+          "name": "StyleExclude",
+          "type": "string",
+          "optional": true,
+          "json_tag": "style_exclude"
+        },
+        {
+          "name": "FinetuneID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "finetune_id"
+        },
+        {
+          "name": "EditReferenceID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "edit_reference_id"
+        },
+        {
+          "name": "EditInstruction",
+          "type": "string",
+          "optional": true,
+          "json_tag": "edit_instruction"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ElevenMusicClip",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Base64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "base64"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        },
+        {
+          "name": "Size",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "size"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ElevenMusicResponse",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Clips",
+          "type": "[]ElevenMusicClip",
+          "optional": false,
+          "json_tag": "clips"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "FinetuneInfo",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "FinetuneID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "finetune_id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": false,
+          "json_tag": "name"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "created_at"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ListFinetunesResponse",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Finetunes",
+          "type": "[]FinetuneInfo",
+          "optional": false,
+          "json_tag": "finetunes"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "MusicAdvancedRequest",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Prompt",
+          "type": "string",
+          "optional": false,
+          "json_tag": "prompt"
+        },
+        {
+          "name": "DurationSeconds",
+          "type": "int",
+          "optional": true,
+          "json_tag": "duration_seconds"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model"
+        },
+        {
+          "name": "FinetuneID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "finetune_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "MusicAdvancedClip",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Base64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "base64"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        },
+        {
+          "name": "Size",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "size"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "MusicAdvancedResponse",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Clips",
+          "type": "[]MusicAdvancedClip",
+          "optional": false,
+          "json_tag": "clips"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "MusicFinetuneInfo",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "FinetuneID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "finetune_id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": false,
+          "json_tag": "name"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": true,
+          "json_tag": "description"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        },
+        {
+          "name": "ModelID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model_id"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "created_at"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "MusicFinetuneListResponse",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Finetunes",
+          "type": "[]MusicFinetuneInfo",
+          "optional": false,
+          "json_tag": "finetunes"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "MusicFinetuneCreateRequest",
+      "kind": "struct",
+      "file": "audio_advanced.go",
+      "fields": [
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": false,
+          "json_tag": "name"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": true,
+          "json_tag": "description"
+        },
+        {
+          "name": "Samples",
+          "type": "[]string",
+          "optional": false,
+          "json_tag": "samples"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AuthUser",
+      "kind": "struct",
+      "file": "auth.go",
+      "fields": [
+        {
+          "name": "ID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": true,
+          "json_tag": "name"
+        },
+        {
+          "name": "Email",
+          "type": "string",
+          "optional": true,
+          "json_tag": "email"
+        },
+        {
+          "name": "AvatarURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "avatar_url"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AuthResponse",
+      "kind": "struct",
+      "file": "auth.go",
+      "fields": [
+        {
+          "name": "Token",
+          "type": "string",
+          "optional": false,
+          "json_tag": "token"
+        },
+        {
+          "name": "User",
+          "type": "AuthUser",
+          "optional": false,
+          "json_tag": "user"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AuthAppleRequest",
+      "kind": "struct",
+      "file": "auth.go",
+      "fields": [
+        {
+          "name": "IDToken",
+          "type": "string",
+          "optional": false,
+          "json_tag": "id_token"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": true,
+          "json_tag": "name"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "BatchJob",
+      "kind": "struct",
+      "file": "batch.go",
+      "fields": [
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "Prompt",
+          "type": "string",
+          "optional": false,
+          "json_tag": "prompt"
+        },
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": true,
+          "json_tag": "title"
+        },
+        {
+          "name": "SystemPrompt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "system_prompt"
+        },
+        {
+          "name": "MaxTokens",
+          "type": "int",
+          "optional": true,
+          "json_tag": "max_tokens"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "BatchSubmitResponse",
+      "kind": "struct",
+      "file": "batch.go",
+      "fields": [
+        {
+          "name": "JobIDs",
+          "type": "[]string",
+          "optional": false,
+          "json_tag": "job_ids"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "BatchJsonlResponse",
+      "kind": "struct",
+      "file": "batch.go",
+      "fields": [
+        {
+          "name": "JobIDs",
+          "type": "[]string",
+          "optional": false,
+          "json_tag": "job_ids"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "BatchJobInfo",
+      "kind": "struct",
+      "file": "batch.go",
+      "fields": [
+        {
+          "name": "JobID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "job_id"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model"
+        },
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": true,
+          "json_tag": "title"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "created_at"
+        },
+        {
+          "name": "CompletedAt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "completed_at"
+        },
+        {
+          "name": "Result",
+          "type": "json.RawMessage",
+          "optional": true,
+          "json_tag": "result"
+        },
+        {
+          "name": "Error",
+          "type": "string",
+          "optional": true,
+          "json_tag": "error"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": true,
+          "json_tag": "cost_ticks"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "BatchJobsResponse",
+      "kind": "struct",
+      "file": "batch.go",
+      "fields": [
+        {
+          "name": "Jobs",
+          "type": "[]BatchJobInfo",
+          "optional": false,
+          "json_tag": "jobs"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ChatRequest",
+      "kind": "struct",
+      "file": "chat.go",
+      "fields": [
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "Messages",
+          "type": "[]ChatMessage",
+          "optional": false,
+          "json_tag": "messages"
+        },
+        {
+          "name": "Tools",
+          "type": "[]ChatTool",
+          "optional": true,
+          "json_tag": "tools"
+        },
+        {
+          "name": "Stream",
+          "type": "bool",
+          "optional": true,
+          "json_tag": "stream"
+        },
+        {
+          "name": "Temperature",
+          "type": "*float64",
+          "optional": true,
+          "json_tag": "temperature"
+        },
+        {
+          "name": "MaxTokens",
+          "type": "*int",
+          "optional": true,
+          "json_tag": "max_tokens"
+        },
+        {
+          "name": "ProviderOptions",
+          "type": "map[string]any",
+          "optional": true,
+          "json_tag": "provider_options"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ChatMessage",
+      "kind": "struct",
+      "file": "chat.go",
+      "fields": [
+        {
+          "name": "Role",
+          "type": "string",
+          "optional": false,
+          "json_tag": "role"
+        },
+        {
+          "name": "Content",
+          "type": "string",
+          "optional": true,
+          "json_tag": "content"
+        },
+        {
+          "name": "ContentBlocks",
+          "type": "[]ContentBlock",
+          "optional": true,
+          "json_tag": "content_blocks"
+        },
+        {
+          "name": "ToolCallID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "tool_call_id"
+        },
+        {
+          "name": "IsError",
+          "type": "bool",
+          "optional": true,
+          "json_tag": "is_error"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ContentBlock",
+      "kind": "struct",
+      "file": "chat.go",
+      "fields": [
+        {
+          "name": "Type",
+          "type": "string",
+          "optional": false,
+          "json_tag": "type"
+        },
+        {
+          "name": "BlockType",
+          "type": "string",
+          "optional": true,
+          "json_tag": "block_type"
+        },
+        {
+          "name": "Text",
+          "type": "string",
+          "optional": true,
+          "json_tag": "text"
+        },
+        {
+          "name": "ID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": true,
+          "json_tag": "name"
+        },
+        {
+          "name": "Input",
+          "type": "map[string]any",
+          "optional": true,
+          "json_tag": "input"
+        },
+        {
+          "name": "ThoughtSignature",
+          "type": "string",
+          "optional": true,
+          "json_tag": "thought_signature"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ChatTool",
+      "kind": "struct",
+      "file": "chat.go",
+      "fields": [
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": false,
+          "json_tag": "name"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": false,
+          "json_tag": "description"
+        },
+        {
+          "name": "Parameters",
+          "type": "map[string]any",
+          "optional": true,
+          "json_tag": "parameters"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ChatResponse",
+      "kind": "struct",
+      "file": "chat.go",
+      "fields": [
+        {
+          "name": "ID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "id"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "Content",
+          "type": "[]ContentBlock",
+          "optional": false,
+          "json_tag": "content"
+        },
+        {
+          "name": "Usage",
+          "type": "*ChatUsage",
+          "optional": true,
+          "json_tag": "usage"
+        },
+        {
+          "name": "StopReason",
+          "type": "string",
+          "optional": false,
+          "json_tag": "stop_reason"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ChatUsage",
+      "kind": "struct",
+      "file": "chat.go",
+      "fields": [
+        {
+          "name": "InputTokens",
+          "type": "int",
+          "optional": false,
+          "json_tag": "input_tokens"
+        },
+        {
+          "name": "OutputTokens",
+          "type": "int",
+          "optional": false,
+          "json_tag": "output_tokens"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "StreamEvent",
+      "kind": "struct",
+      "file": "chat.go",
+      "fields": [
+        {
+          "name": "Type",
+          "type": "string",
+          "optional": false,
+          "json_tag": "type"
+        },
+        {
+          "name": "EventType",
+          "type": "string",
+          "optional": true,
+          "json_tag": "event_type"
+        },
+        {
+          "name": "Delta",
+          "type": "*StreamDelta",
+          "optional": true,
+          "json_tag": "delta"
+        },
+        {
+          "name": "ToolUse",
+          "type": "*StreamToolUse",
+          "optional": true,
+          "json_tag": "tool_use"
+        },
+        {
+          "name": "Usage",
+          "type": "*ChatUsage",
+          "optional": true,
+          "json_tag": "usage"
+        },
+        {
+          "name": "Error",
+          "type": "string",
+          "optional": true,
+          "json_tag": "error"
+        },
+        {
+          "name": "Done",
+          "type": "bool",
+          "optional": true,
+          "json_tag": "done"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "StreamDelta",
+      "kind": "struct",
+      "file": "chat.go",
+      "fields": [
+        {
+          "name": "Text",
+          "type": "string",
+          "optional": false,
+          "json_tag": "text"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "StreamToolUse",
+      "kind": "struct",
+      "file": "chat.go",
+      "fields": [
+        {
+          "name": "ID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": false,
+          "json_tag": "name"
+        },
+        {
+          "name": "Input",
+          "type": "map[string]any",
+          "optional": false,
+          "json_tag": "input"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "rawStreamEvent",
+      "kind": "struct",
+      "file": "chat.go",
+      "fields": [
+        {
+          "name": "Type",
+          "type": "string",
+          "optional": false,
+          "json_tag": "type"
+        },
+        {
+          "name": "Delta",
+          "type": "*StreamDelta",
+          "optional": true,
+          "json_tag": "delta"
+        },
+        {
+          "name": "ID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": true,
+          "json_tag": "name"
+        },
+        {
+          "name": "Input",
+          "type": "map[string]any",
+          "optional": true,
+          "json_tag": "input"
+        },
+        {
+          "name": "InputTokens",
+          "type": "int",
+          "optional": true,
+          "json_tag": "input_tokens"
+        },
+        {
+          "name": "OutputTokens",
+          "type": "int",
+          "optional": true,
+          "json_tag": "output_tokens"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": true,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "Message",
+          "type": "string",
+          "optional": true,
+          "json_tag": "message"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ComputeTemplate",
+      "kind": "struct",
+      "file": "compute.go",
+      "fields": [
+        {
+          "name": "ID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": true,
+          "json_tag": "name"
+        },
+        {
+          "name": "DisplayName",
+          "type": "string",
+          "optional": true,
+          "json_tag": "display_name"
+        },
+        {
+          "name": "GPU",
+          "type": "string",
+          "optional": true,
+          "json_tag": "gpu"
+        },
+        {
+          "name": "MachineType",
+          "type": "string",
+          "optional": true,
+          "json_tag": "machine_type"
+        },
+        {
+          "name": "GPUType",
+          "type": "string",
+          "optional": true,
+          "json_tag": "gpu_type"
+        },
+        {
+          "name": "GPUCount",
+          "type": "int",
+          "optional": true,
+          "json_tag": "gpu_count"
+        },
+        {
+          "name": "VramGB",
+          "type": "int",
+          "optional": true,
+          "json_tag": "vram_gb"
+        },
+        {
+          "name": "VCPUs",
+          "type": "int",
+          "optional": true,
+          "json_tag": "vcpus"
+        },
+        {
+          "name": "RamGB",
+          "type": "int",
+          "optional": true,
+          "json_tag": "ram_gb"
+        },
+        {
+          "name": "MemoryGB",
+          "type": "int",
+          "optional": true,
+          "json_tag": "memory_gb"
+        },
+        {
+          "name": "DiskGB",
+          "type": "int",
+          "optional": true,
+          "json_tag": "disk_gb"
+        },
+        {
+          "name": "PricePerHourUSD",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "price_per_hour_usd"
+        },
+        {
+          "name": "HourlyUSD",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "hourly_usd"
+        },
+        {
+          "name": "SpotHourlyUSD",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "spot_hourly_usd"
+        },
+        {
+          "name": "SpotAllowed",
+          "type": "bool",
+          "optional": true,
+          "json_tag": "spot_allowed"
+        },
+        {
+          "name": "Zones",
+          "type": "[]string",
+          "optional": true,
+          "json_tag": "zones"
+        },
+        {
+          "name": "AvailableZones",
+          "type": "[]string",
+          "optional": true,
+          "json_tag": "available_zones"
+        },
+        {
+          "name": "BootTimeSecs",
+          "type": "int",
+          "optional": true,
+          "json_tag": "boot_time_secs"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "TemplatesResponse",
+      "kind": "struct",
+      "file": "compute.go",
+      "fields": [
+        {
+          "name": "Templates",
+          "type": "[]ComputeTemplate",
+          "optional": false,
+          "json_tag": "templates"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ProvisionRequest",
+      "kind": "struct",
+      "file": "compute.go",
+      "fields": [
+        {
+          "name": "Template",
+          "type": "string",
+          "optional": false,
+          "json_tag": "template"
+        },
+        {
+          "name": "Zone",
+          "type": "string",
+          "optional": true,
+          "json_tag": "zone"
+        },
+        {
+          "name": "Spot",
+          "type": "bool",
+          "optional": true,
+          "json_tag": "spot"
+        },
+        {
+          "name": "AutoTeardownMinutes",
+          "type": "int",
+          "optional": true,
+          "json_tag": "auto_teardown_minutes"
+        },
+        {
+          "name": "SSHPublicKey",
+          "type": "string",
+          "optional": true,
+          "json_tag": "ssh_public_key"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ProvisionResponse",
+      "kind": "struct",
+      "file": "compute.go",
+      "fields": [
+        {
+          "name": "InstanceID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "instance_id"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        },
+        {
+          "name": "Template",
+          "type": "string",
+          "optional": true,
+          "json_tag": "template"
+        },
+        {
+          "name": "Zone",
+          "type": "string",
+          "optional": false,
+          "json_tag": "zone"
+        },
+        {
+          "name": "SSHAddress",
+          "type": "string",
+          "optional": true,
+          "json_tag": "ssh_address"
+        },
+        {
+          "name": "PricePerHourUSD",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "price_per_hour_usd"
+        },
+        {
+          "name": "MachineType",
+          "type": "string",
+          "optional": true,
+          "json_tag": "machine_type"
+        },
+        {
+          "name": "GPUType",
+          "type": "string",
+          "optional": true,
+          "json_tag": "gpu_type"
+        },
+        {
+          "name": "HourlyUSD",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "hourly_usd"
+        },
+        {
+          "name": "CostUSD",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "cost_usd"
+        },
+        {
+          "name": "EstimatedBootSecs",
+          "type": "int",
+          "optional": true,
+          "json_tag": "estimated_boot_secs"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ComputeInstance",
+      "kind": "struct",
+      "file": "compute.go",
+      "fields": [
+        {
+          "name": "ID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "id"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        },
+        {
+          "name": "Template",
+          "type": "string",
+          "optional": true,
+          "json_tag": "template"
+        },
+        {
+          "name": "Zone",
+          "type": "string",
+          "optional": true,
+          "json_tag": "zone"
+        },
+        {
+          "name": "SSHAddress",
+          "type": "string",
+          "optional": true,
+          "json_tag": "ssh_address"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "created_at"
+        },
+        {
+          "name": "PricePerHourUSD",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "price_per_hour_usd"
+        },
+        {
+          "name": "AutoTeardownMinutes",
+          "type": "int",
+          "optional": true,
+          "json_tag": "auto_teardown_minutes"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ComputeInstanceInfo",
+      "kind": "struct",
+      "file": "compute.go",
+      "fields": [
+        {
+          "name": "InstanceID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "instance_id"
+        },
+        {
+          "name": "Template",
+          "type": "string",
+          "optional": false,
+          "json_tag": "template"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        },
+        {
+          "name": "GCPStatus",
+          "type": "string",
+          "optional": true,
+          "json_tag": "gcp_status"
+        },
+        {
+          "name": "Zone",
+          "type": "string",
+          "optional": false,
+          "json_tag": "zone"
+        },
+        {
+          "name": "MachineType",
+          "type": "string",
+          "optional": true,
+          "json_tag": "machine_type"
+        },
+        {
+          "name": "ExternalIP",
+          "type": "string",
+          "optional": true,
+          "json_tag": "external_ip"
+        },
+        {
+          "name": "GPUType",
+          "type": "string",
+          "optional": true,
+          "json_tag": "gpu_type"
+        },
+        {
+          "name": "GPUCount",
+          "type": "int",
+          "optional": true,
+          "json_tag": "gpu_count"
+        },
+        {
+          "name": "Spot",
+          "type": "bool",
+          "optional": true,
+          "json_tag": "spot"
+        },
+        {
+          "name": "HourlyUSD",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "hourly_usd"
+        },
+        {
+          "name": "CostUSD",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "cost_usd"
+        },
+        {
+          "name": "UptimeMinutes",
+          "type": "int",
+          "optional": false,
+          "json_tag": "uptime_minutes"
+        },
+        {
+          "name": "AutoTeardownMinutes",
+          "type": "int",
+          "optional": false,
+          "json_tag": "auto_teardown_minutes"
+        },
+        {
+          "name": "SSHUsername",
+          "type": "string",
+          "optional": true,
+          "json_tag": "ssh_username"
+        },
+        {
+          "name": "LastActiveAt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "last_active_at"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "created_at"
+        },
+        {
+          "name": "TerminatedAt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "terminated_at"
+        },
+        {
+          "name": "ErrorMessage",
+          "type": "string",
+          "optional": true,
+          "json_tag": "error_message"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "InstancesResponse",
+      "kind": "struct",
+      "file": "compute.go",
+      "fields": [
+        {
+          "name": "Instances",
+          "type": "[]ComputeInstanceInfo",
+          "optional": false,
+          "json_tag": "instances"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "DeleteResponse",
+      "kind": "struct",
+      "file": "compute.go",
+      "fields": [
+        {
+          "name": "InstanceID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "instance_id"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        },
+        {
+          "name": "FinalCostUSD",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "final_cost_usd"
+        },
+        {
+          "name": "UptimeMinutes",
+          "type": "int",
+          "optional": false,
+          "json_tag": "uptime_minutes"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SSHKeyRequest",
+      "kind": "struct",
+      "file": "compute.go",
+      "fields": [
+        {
+          "name": "SSHPublicKey",
+          "type": "string",
+          "optional": true,
+          "json_tag": "ssh_public_key"
+        },
+        {
+          "name": "PublicKey",
+          "type": "string",
+          "optional": true,
+          "json_tag": "public_key"
+        },
+        {
+          "name": "Username",
+          "type": "string",
+          "optional": true,
+          "json_tag": "username"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "BillingRequest",
+      "kind": "struct",
+      "file": "compute.go",
+      "fields": [
+        {
+          "name": "InstanceID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "instance_id"
+        },
+        {
+          "name": "StartDate",
+          "type": "string",
+          "optional": true,
+          "json_tag": "start_date"
+        },
+        {
+          "name": "EndDate",
+          "type": "string",
+          "optional": true,
+          "json_tag": "end_date"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "BillingEntry",
+      "kind": "struct",
+      "file": "compute.go",
+      "fields": [
+        {
+          "name": "InstanceID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "instance_id"
+        },
+        {
+          "name": "InstanceName",
+          "type": "string",
+          "optional": true,
+          "json_tag": "instance_name"
+        },
+        {
+          "name": "CostUSD",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "cost_usd"
+        },
+        {
+          "name": "UsageHours",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "usage_hours"
+        },
+        {
+          "name": "SKUDescription",
+          "type": "string",
+          "optional": true,
+          "json_tag": "sku_description"
+        },
+        {
+          "name": "StartTime",
+          "type": "string",
+          "optional": true,
+          "json_tag": "start_time"
+        },
+        {
+          "name": "EndTime",
+          "type": "string",
+          "optional": true,
+          "json_tag": "end_time"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "BillingResponse",
+      "kind": "struct",
+      "file": "compute.go",
+      "fields": [
+        {
+          "name": "Entries",
+          "type": "[]BillingEntry",
+          "optional": false,
+          "json_tag": "entries"
+        },
+        {
+          "name": "TotalCostUSD",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "total_cost_usd"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ContactRequest",
+      "kind": "struct",
+      "file": "contact.go",
+      "fields": [
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": false,
+          "json_tag": "name"
+        },
+        {
+          "name": "Email",
+          "type": "string",
+          "optional": false,
+          "json_tag": "email"
+        },
+        {
+          "name": "Subject",
+          "type": "string",
+          "optional": true,
+          "json_tag": "subject"
+        },
+        {
+          "name": "Message",
+          "type": "string",
+          "optional": false,
+          "json_tag": "message"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "CreditPack",
+      "kind": "struct",
+      "file": "credits.go",
+      "fields": [
+        {
+          "name": "ID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": true,
+          "json_tag": "name"
+        },
+        {
+          "name": "PriceUSD",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "price_usd"
+        },
+        {
+          "name": "CreditTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "credit_ticks"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": true,
+          "json_tag": "description"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "CreditPacksResponse",
+      "kind": "struct",
+      "file": "credits.go",
+      "fields": [
+        {
+          "name": "Packs",
+          "type": "[]CreditPack",
+          "optional": false,
+          "json_tag": "packs"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "CreditPurchaseRequest",
+      "kind": "struct",
+      "file": "credits.go",
+      "fields": [
+        {
+          "name": "PackID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "pack_id"
+        },
+        {
+          "name": "SuccessURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "success_url"
+        },
+        {
+          "name": "CancelURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "cancel_url"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "CreditPurchaseResponse",
+      "kind": "struct",
+      "file": "credits.go",
+      "fields": [
+        {
+          "name": "CheckoutURL",
+          "type": "string",
+          "optional": false,
+          "json_tag": "checkout_url"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "CreditBalanceResponse",
+      "kind": "struct",
+      "file": "credits.go",
+      "fields": [
+        {
+          "name": "BalanceTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "balance_ticks"
+        },
+        {
+          "name": "BalanceUSD",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "balance_usd"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "CreditTier",
+      "kind": "struct",
+      "file": "credits.go",
+      "fields": [
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": true,
+          "json_tag": "name"
+        },
+        {
+          "name": "MinBalance",
+          "type": "int64",
+          "optional": true,
+          "json_tag": "min_balance"
+        },
+        {
+          "name": "DiscountPercent",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "discount_percent"
+        },
+        {
+          "name": "Extra",
+          "type": "map[string]any",
+          "optional": true,
+          "json_tag": "extra"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "CreditTiersResponse",
+      "kind": "struct",
+      "file": "credits.go",
+      "fields": [
+        {
+          "name": "Tiers",
+          "type": "[]CreditTier",
+          "optional": false,
+          "json_tag": "tiers"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "DevProgramApplyRequest",
+      "kind": "struct",
+      "file": "credits.go",
+      "fields": [
+        {
+          "name": "UseCase",
+          "type": "string",
+          "optional": false,
+          "json_tag": "use_case"
+        },
+        {
+          "name": "Company",
+          "type": "string",
+          "optional": true,
+          "json_tag": "company"
+        },
+        {
+          "name": "ExpectedUSD",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "expected_usd"
+        },
+        {
+          "name": "Website",
+          "type": "string",
+          "optional": true,
+          "json_tag": "website"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "DevProgramApplyResponse",
+      "kind": "struct",
+      "file": "credits.go",
+      "fields": [
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "DocumentRequest",
+      "kind": "struct",
+      "file": "documents.go",
+      "fields": [
+        {
+          "name": "FileBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "file_base64"
+        },
+        {
+          "name": "Filename",
+          "type": "string",
+          "optional": false,
+          "json_tag": "filename"
+        },
+        {
+          "name": "OutputFormat",
+          "type": "string",
+          "optional": true,
+          "json_tag": "output_format"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "DocumentResponse",
+      "kind": "struct",
+      "file": "documents.go",
+      "fields": [
+        {
+          "name": "Content",
+          "type": "string",
+          "optional": false,
+          "json_tag": "content"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        },
+        {
+          "name": "Meta",
+          "type": "map[string]any",
+          "optional": true,
+          "json_tag": "meta"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ChunkRequest",
+      "kind": "struct",
+      "file": "documents_advanced.go",
+      "fields": [
+        {
+          "name": "FileBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "file_base64"
+        },
+        {
+          "name": "Filename",
+          "type": "string",
+          "optional": false,
+          "json_tag": "filename"
+        },
+        {
+          "name": "MaxChunkTokens",
+          "type": "int",
+          "optional": true,
+          "json_tag": "max_chunk_tokens"
+        },
+        {
+          "name": "OverlapTokens",
+          "type": "int",
+          "optional": true,
+          "json_tag": "overlap_tokens"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ChunkResponse",
+      "kind": "struct",
+      "file": "documents_advanced.go",
+      "fields": [
+        {
+          "name": "Chunks",
+          "type": "[]DocumentChunk",
+          "optional": false,
+          "json_tag": "chunks"
+        },
+        {
+          "name": "TotalChunks",
+          "type": "int",
+          "optional": true,
+          "json_tag": "total_chunks"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ProcessRequest",
+      "kind": "struct",
+      "file": "documents_advanced.go",
+      "fields": [
+        {
+          "name": "FileBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "file_base64"
+        },
+        {
+          "name": "Filename",
+          "type": "string",
+          "optional": false,
+          "json_tag": "filename"
+        },
+        {
+          "name": "Prompt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "prompt"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ProcessResponse",
+      "kind": "struct",
+      "file": "documents_advanced.go",
+      "fields": [
+        {
+          "name": "Content",
+          "type": "string",
+          "optional": false,
+          "json_tag": "content"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ChunkDocumentRequest",
+      "kind": "struct",
+      "file": "documents_advanced.go",
+      "fields": [
+        {
+          "name": "FileBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "file_base64"
+        },
+        {
+          "name": "Filename",
+          "type": "string",
+          "optional": false,
+          "json_tag": "filename"
+        },
+        {
+          "name": "ChunkSize",
+          "type": "int",
+          "optional": true,
+          "json_tag": "chunk_size"
+        },
+        {
+          "name": "ChunkOverlap",
+          "type": "int",
+          "optional": true,
+          "json_tag": "chunk_overlap"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ChunkDocumentResponse",
+      "kind": "struct",
+      "file": "documents_advanced.go",
+      "fields": [
+        {
+          "name": "Chunks",
+          "type": "[]DocumentChunk",
+          "optional": false,
+          "json_tag": "chunks"
+        },
+        {
+          "name": "Meta",
+          "type": "map[string]any",
+          "optional": true,
+          "json_tag": "meta"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "DocumentChunk",
+      "kind": "struct",
+      "file": "documents_advanced.go",
+      "fields": [
+        {
+          "name": "Text",
+          "type": "string",
+          "optional": false,
+          "json_tag": "text"
+        },
+        {
+          "name": "Index",
+          "type": "int",
+          "optional": false,
+          "json_tag": "index"
+        },
+        {
+          "name": "TokenCount",
+          "type": "int",
+          "optional": true,
+          "json_tag": "token_count"
+        },
+        {
+          "name": "PageNumber",
+          "type": "int",
+          "optional": true,
+          "json_tag": "page_number"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ProcessDocumentRequest",
+      "kind": "struct",
+      "file": "documents_advanced.go",
+      "fields": [
+        {
+          "name": "FileBase64",
+          "type": "string",
+          "optional": false,
+          "json_tag": "file_base64"
+        },
+        {
+          "name": "Filename",
+          "type": "string",
+          "optional": false,
+          "json_tag": "filename"
+        },
+        {
+          "name": "OutputFormat",
+          "type": "string",
+          "optional": true,
+          "json_tag": "output_format"
+        },
+        {
+          "name": "ExtractImages",
+          "type": "bool",
+          "optional": true,
+          "json_tag": "extract_images"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ProcessDocumentResponse",
+      "kind": "struct",
+      "file": "documents_advanced.go",
+      "fields": [
+        {
+          "name": "Content",
+          "type": "string",
+          "optional": false,
+          "json_tag": "content"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        },
+        {
+          "name": "Meta",
+          "type": "map[string]any",
+          "optional": true,
+          "json_tag": "meta"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "EmbedRequest",
+      "kind": "struct",
+      "file": "embeddings.go",
+      "fields": [
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "Input",
+          "type": "[]string",
+          "optional": false,
+          "json_tag": "input"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "EmbedResponse",
+      "kind": "struct",
+      "file": "embeddings.go",
+      "fields": [
+        {
+          "name": "Embeddings",
+          "type": "[][]float64",
+          "optional": false,
+          "json_tag": "embeddings"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "APIError",
+      "kind": "struct",
+      "file": "errors.go",
+      "fields": [
+        {
+          "name": "StatusCode",
+          "type": "int",
+          "optional": false,
+          "json_tag": "-"
+        },
+        {
+          "name": "Code",
+          "type": "string",
+          "optional": false,
+          "json_tag": "code"
+        },
+        {
+          "name": "Message",
+          "type": "string",
+          "optional": false,
+          "json_tag": "message"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "-"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "apiErrorBody",
+      "kind": "struct",
+      "file": "errors.go",
+      "fields": [
+        {
+          "name": "Message",
+          "type": "string",
+          "optional": false,
+          "json_tag": "message"
+        },
+        {
+          "name": "Type",
+          "type": "string",
+          "optional": false,
+          "json_tag": "type"
+        },
+        {
+          "name": "Code",
+          "type": "string",
+          "optional": false,
+          "json_tag": "code"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ImageRequest",
+      "kind": "struct",
+      "file": "image.go",
+      "fields": [
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "Prompt",
+          "type": "string",
+          "optional": false,
+          "json_tag": "prompt"
+        },
+        {
+          "name": "Count",
+          "type": "int",
+          "optional": true,
+          "json_tag": "count"
+        },
+        {
+          "name": "Size",
+          "type": "string",
+          "optional": true,
+          "json_tag": "size"
+        },
+        {
+          "name": "AspectRatio",
+          "type": "string",
+          "optional": true,
+          "json_tag": "aspect_ratio"
+        },
+        {
+          "name": "Quality",
+          "type": "string",
+          "optional": true,
+          "json_tag": "quality"
+        },
+        {
+          "name": "OutputFormat",
+          "type": "string",
+          "optional": true,
+          "json_tag": "output_format"
+        },
+        {
+          "name": "Style",
+          "type": "string",
+          "optional": true,
+          "json_tag": "style"
+        },
+        {
+          "name": "Background",
+          "type": "string",
+          "optional": true,
+          "json_tag": "background"
+        },
+        {
+          "name": "ImageURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "image_url"
+        },
+        {
+          "name": "Topology",
+          "type": "string",
+          "optional": true,
+          "json_tag": "topology"
+        },
+        {
+          "name": "TargetPolycount",
+          "type": "int",
+          "optional": true,
+          "json_tag": "target_polycount"
+        },
+        {
+          "name": "SymmetryMode",
+          "type": "string",
+          "optional": true,
+          "json_tag": "symmetry_mode"
+        },
+        {
+          "name": "PoseMode",
+          "type": "string",
+          "optional": true,
+          "json_tag": "pose_mode"
+        },
+        {
+          "name": "EnablePBR",
+          "type": "*bool",
+          "optional": true,
+          "json_tag": "enable_pbr"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ImageResponse",
+      "kind": "struct",
+      "file": "image.go",
+      "fields": [
+        {
+          "name": "Images",
+          "type": "[]GeneratedImage",
+          "optional": false,
+          "json_tag": "images"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "GeneratedImage",
+      "kind": "struct",
+      "file": "image.go",
+      "fields": [
+        {
+          "name": "Base64Data",
+          "type": "string",
+          "optional": false,
+          "json_tag": "base64"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        },
+        {
+          "name": "Index",
+          "type": "int",
+          "optional": false,
+          "json_tag": "index"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ImageEditRequest",
+      "kind": "struct",
+      "file": "image.go",
+      "fields": [
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "Prompt",
+          "type": "string",
+          "optional": false,
+          "json_tag": "prompt"
+        },
+        {
+          "name": "InputImages",
+          "type": "[]string",
+          "optional": false,
+          "json_tag": "input_images"
+        },
+        {
+          "name": "Count",
+          "type": "int",
+          "optional": true,
+          "json_tag": "count"
+        },
+        {
+          "name": "Size",
+          "type": "string",
+          "optional": true,
+          "json_tag": "size"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "JobCreateRequest",
+      "kind": "struct",
+      "file": "jobs.go",
+      "fields": [
+        {
+          "name": "Type",
+          "type": "string",
+          "optional": false,
+          "json_tag": "type"
+        },
+        {
+          "name": "JobType",
+          "type": "string",
+          "optional": true,
+          "json_tag": "job_type"
+        },
+        {
+          "name": "Params",
+          "type": "json.RawMessage",
+          "optional": false,
+          "json_tag": "params"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "JobCreateResponse",
+      "kind": "struct",
+      "file": "jobs.go",
+      "fields": [
+        {
+          "name": "JobID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "job_id"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "JobStatusResponse",
+      "kind": "struct",
+      "file": "jobs.go",
+      "fields": [
+        {
+          "name": "JobID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "job_id"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        },
+        {
+          "name": "Result",
+          "type": "json.RawMessage",
+          "optional": true,
+          "json_tag": "result"
+        },
+        {
+          "name": "Error",
+          "type": "string",
+          "optional": true,
+          "json_tag": "error"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "JobStreamEvent",
+      "kind": "struct",
+      "file": "jobs.go",
+      "fields": [
+        {
+          "name": "Type",
+          "type": "string",
+          "optional": false,
+          "json_tag": "type"
+        },
+        {
+          "name": "JobID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "job_id"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": true,
+          "json_tag": "status"
+        },
+        {
+          "name": "Result",
+          "type": "json.RawMessage",
+          "optional": true,
+          "json_tag": "result"
+        },
+        {
+          "name": "Error",
+          "type": "string",
+          "optional": true,
+          "json_tag": "error"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": true,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "CompletedAt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "completed_at"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "RemeshRequest",
+      "kind": "struct",
+      "file": "jobs.go",
+      "fields": [
+        {
+          "name": "InputTaskID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "input_task_id"
+        },
+        {
+          "name": "ModelURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model_url"
+        },
+        {
+          "name": "TargetFormats",
+          "type": "[]string",
+          "optional": true,
+          "json_tag": "target_formats"
+        },
+        {
+          "name": "Topology",
+          "type": "string",
+          "optional": true,
+          "json_tag": "topology"
+        },
+        {
+          "name": "TargetPolycount",
+          "type": "int",
+          "optional": true,
+          "json_tag": "target_polycount"
+        },
+        {
+          "name": "ResizeHeight",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "resize_height"
+        },
+        {
+          "name": "OriginAt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "origin_at"
+        },
+        {
+          "name": "ConvertFormatOnly",
+          "type": "bool",
+          "optional": true,
+          "json_tag": "convert_format_only"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "RigRequest",
+      "kind": "struct",
+      "file": "jobs.go",
+      "fields": [
+        {
+          "name": "InputTaskID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "input_task_id"
+        },
+        {
+          "name": "ModelURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model_url"
+        },
+        {
+          "name": "HeightMeters",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "height_meters"
+        },
+        {
+          "name": "TextureImageURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "texture_image_url"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AnimateRequest",
+      "kind": "struct",
+      "file": "jobs.go",
+      "fields": [
+        {
+          "name": "RigTaskID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "rig_task_id"
+        },
+        {
+          "name": "ActionID",
+          "type": "int",
+          "optional": false,
+          "json_tag": "action_id"
+        },
+        {
+          "name": "PostProcess",
+          "type": "*PostProcess",
+          "optional": true,
+          "json_tag": "post_process"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "PostProcess",
+      "kind": "struct",
+      "file": "jobs.go",
+      "fields": [
+        {
+          "name": "OperationType",
+          "type": "string",
+          "optional": false,
+          "json_tag": "operation_type"
+        },
+        {
+          "name": "FPS",
+          "type": "int",
+          "optional": true,
+          "json_tag": "fps"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "JobResponse",
+      "kind": "struct",
+      "file": "jobs.go",
+      "fields": [
+        {
+          "name": "JobID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "job_id"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "Extra",
+          "type": "map[string]any",
+          "optional": true,
+          "json_tag": "extra"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "JobSummary",
+      "kind": "struct",
+      "file": "jobs.go",
+      "fields": [
+        {
+          "name": "JobID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "job_id"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        },
+        {
+          "name": "JobType",
+          "type": "string",
+          "optional": true,
+          "json_tag": "type"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "created_at"
+        },
+        {
+          "name": "CompletedAt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "completed_at"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ListJobsResponse",
+      "kind": "struct",
+      "file": "jobs.go",
+      "fields": [
+        {
+          "name": "Jobs",
+          "type": "[]JobSummary",
+          "optional": false,
+          "json_tag": "jobs"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ModelUrls",
+      "kind": "struct",
+      "file": "jobs.go",
+      "fields": [
+        {
+          "name": "GLB",
+          "type": "string",
+          "optional": false,
+          "json_tag": "glb"
+        },
+        {
+          "name": "FBX",
+          "type": "string",
+          "optional": false,
+          "json_tag": "fbx"
+        },
+        {
+          "name": "OBJ",
+          "type": "string",
+          "optional": false,
+          "json_tag": "obj"
+        },
+        {
+          "name": "USDZ",
+          "type": "string",
+          "optional": false,
+          "json_tag": "usdz"
+        },
+        {
+          "name": "STL",
+          "type": "string",
+          "optional": false,
+          "json_tag": "stl"
+        },
+        {
+          "name": "Blend",
+          "type": "string",
+          "optional": false,
+          "json_tag": "blend"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AnimationPostProcess",
+      "kind": "struct",
+      "file": "jobs.go",
+      "fields": [
+        {
+          "name": "OperationType",
+          "type": "string",
+          "optional": false,
+          "json_tag": "operation_type"
+        },
+        {
+          "name": "FPS",
+          "type": "int",
+          "optional": true,
+          "json_tag": "fps"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "RetextureRequest",
+      "kind": "struct",
+      "file": "jobs.go",
+      "fields": [
+        {
+          "name": "InputTaskID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "input_task_id"
+        },
+        {
+          "name": "ModelURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model_url"
+        },
+        {
+          "name": "Prompt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "prompt"
+        },
+        {
+          "name": "TextStylePrompt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "text_style_prompt"
+        },
+        {
+          "name": "ImageStyleURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "image_style_url"
+        },
+        {
+          "name": "AIModel",
+          "type": "string",
+          "optional": true,
+          "json_tag": "ai_model"
+        },
+        {
+          "name": "EnableOriginalUV",
+          "type": "*bool",
+          "optional": true,
+          "json_tag": "enable_original_uv"
+        },
+        {
+          "name": "EnablePBR",
+          "type": "*bool",
+          "optional": true,
+          "json_tag": "enable_pbr"
+        },
+        {
+          "name": "RemoveLighting",
+          "type": "*bool",
+          "optional": true,
+          "json_tag": "remove_lighting"
+        },
+        {
+          "name": "TargetFormats",
+          "type": "[]string",
+          "optional": true,
+          "json_tag": "target_formats"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "JobListEntry",
+      "kind": "struct",
+      "file": "jobs_list.go",
+      "fields": [
+        {
+          "name": "JobID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "job_id"
+        },
+        {
+          "name": "Type",
+          "type": "string",
+          "optional": false,
+          "json_tag": "type"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        },
+        {
+          "name": "Result",
+          "type": "json.RawMessage",
+          "optional": true,
+          "json_tag": "result"
+        },
+        {
+          "name": "Error",
+          "type": "string",
+          "optional": true,
+          "json_tag": "error"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": true,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "time.Time",
+          "optional": false,
+          "json_tag": "created_at"
+        },
+        {
+          "name": "StartedAt",
+          "type": "*time.Time",
+          "optional": true,
+          "json_tag": "started_at"
+        },
+        {
+          "name": "CompletedAt",
+          "type": "*time.Time",
+          "optional": true,
+          "json_tag": "completed_at"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "JobListResponse",
+      "kind": "struct",
+      "file": "jobs_list.go",
+      "fields": [
+        {
+          "name": "Jobs",
+          "type": "[]JobListEntry",
+          "optional": false,
+          "json_tag": "jobs"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "CreateKeyRequest",
+      "kind": "struct",
+      "file": "keys.go",
+      "fields": [
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": false,
+          "json_tag": "name"
+        },
+        {
+          "name": "Endpoints",
+          "type": "[]string",
+          "optional": true,
+          "json_tag": "endpoints"
+        },
+        {
+          "name": "SpendCapUSD",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "spend_cap_usd"
+        },
+        {
+          "name": "RateLimit",
+          "type": "int",
+          "optional": true,
+          "json_tag": "rate_limit"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "CreateKeyResponse",
+      "kind": "struct",
+      "file": "keys.go",
+      "fields": [
+        {
+          "name": "Key",
+          "type": "string",
+          "optional": false,
+          "json_tag": "key"
+        },
+        {
+          "name": "Details",
+          "type": "KeyDetails",
+          "optional": false,
+          "json_tag": "details"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "KeyDetails",
+      "kind": "struct",
+      "file": "keys.go",
+      "fields": [
+        {
+          "name": "ID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": false,
+          "json_tag": "name"
+        },
+        {
+          "name": "KeyPrefix",
+          "type": "string",
+          "optional": true,
+          "json_tag": "key_prefix"
+        },
+        {
+          "name": "Prefix",
+          "type": "string",
+          "optional": true,
+          "json_tag": "prefix"
+        },
+        {
+          "name": "Scope",
+          "type": "any",
+          "optional": true,
+          "json_tag": "scope"
+        },
+        {
+          "name": "Endpoints",
+          "type": "[]string",
+          "optional": true,
+          "json_tag": "endpoints"
+        },
+        {
+          "name": "SpendCapTicks",
+          "type": "int64",
+          "optional": true,
+          "json_tag": "spend_cap_ticks"
+        },
+        {
+          "name": "SpentTicks",
+          "type": "int64",
+          "optional": true,
+          "json_tag": "spent_ticks"
+        },
+        {
+          "name": "RateLimit",
+          "type": "int",
+          "optional": true,
+          "json_tag": "rate_limit"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "created_at"
+        },
+        {
+          "name": "LastUsed",
+          "type": "string",
+          "optional": true,
+          "json_tag": "last_used"
+        },
+        {
+          "name": "Revoked",
+          "type": "bool",
+          "optional": true,
+          "json_tag": "revoked"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ListKeysResponse",
+      "kind": "struct",
+      "file": "keys.go",
+      "fields": [
+        {
+          "name": "Keys",
+          "type": "[]KeyDetails",
+          "optional": false,
+          "json_tag": "keys"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "StatusResponse",
+      "kind": "struct",
+      "file": "keys.go",
+      "fields": [
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        },
+        {
+          "name": "Message",
+          "type": "string",
+          "optional": true,
+          "json_tag": "message"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ModelInfo",
+      "kind": "struct",
+      "file": "models.go",
+      "fields": [
+        {
+          "name": "ID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "id"
+        },
+        {
+          "name": "Provider",
+          "type": "string",
+          "optional": false,
+          "json_tag": "provider"
+        },
+        {
+          "name": "DisplayName",
+          "type": "string",
+          "optional": false,
+          "json_tag": "display_name"
+        },
+        {
+          "name": "InputPerMillion",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "input_per_million"
+        },
+        {
+          "name": "OutputPerMillion",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "output_per_million"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "modelsResponse",
+      "kind": "struct",
+      "file": "models.go",
+      "fields": [
+        {
+          "name": "Models",
+          "type": "[]ModelInfo",
+          "optional": false,
+          "json_tag": "models"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "pricingResponse",
+      "kind": "struct",
+      "file": "models.go",
+      "fields": [
+        {
+          "name": "Pricing",
+          "type": "[]PricingInfo",
+          "optional": false,
+          "json_tag": "pricing"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "PricingInfo",
+      "kind": "struct",
+      "file": "models.go",
+      "fields": [
+        {
+          "name": "ID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "id"
+        },
+        {
+          "name": "Provider",
+          "type": "string",
+          "optional": false,
+          "json_tag": "provider"
+        },
+        {
+          "name": "DisplayName",
+          "type": "string",
+          "optional": false,
+          "json_tag": "display_name"
+        },
+        {
+          "name": "InputPerMillion",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "input_per_million"
+        },
+        {
+          "name": "OutputPerMillion",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "output_per_million"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "RAGSearchRequest",
+      "kind": "struct",
+      "file": "rag.go",
+      "fields": [
+        {
+          "name": "Query",
+          "type": "string",
+          "optional": false,
+          "json_tag": "query"
+        },
+        {
+          "name": "Corpus",
+          "type": "string",
+          "optional": true,
+          "json_tag": "corpus"
+        },
+        {
+          "name": "TopK",
+          "type": "int",
+          "optional": true,
+          "json_tag": "top_k"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "RAGSearchResponse",
+      "kind": "struct",
+      "file": "rag.go",
+      "fields": [
+        {
+          "name": "Results",
+          "type": "[]RAGResult",
+          "optional": false,
+          "json_tag": "results"
+        },
+        {
+          "name": "Query",
+          "type": "string",
+          "optional": false,
+          "json_tag": "query"
+        },
+        {
+          "name": "Corpora",
+          "type": "[]string",
+          "optional": true,
+          "json_tag": "corpora"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "RAGResult",
+      "kind": "struct",
+      "file": "rag.go",
+      "fields": [
+        {
+          "name": "SourceURI",
+          "type": "string",
+          "optional": false,
+          "json_tag": "source_uri"
+        },
+        {
+          "name": "SourceName",
+          "type": "string",
+          "optional": false,
+          "json_tag": "source_name"
+        },
+        {
+          "name": "Text",
+          "type": "string",
+          "optional": false,
+          "json_tag": "text"
+        },
+        {
+          "name": "Score",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "score"
+        },
+        {
+          "name": "Distance",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "distance"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "RAGCorpus",
+      "kind": "struct",
+      "file": "rag.go",
+      "fields": [
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": false,
+          "json_tag": "name"
+        },
+        {
+          "name": "DisplayName",
+          "type": "string",
+          "optional": false,
+          "json_tag": "displayName"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": false,
+          "json_tag": "description"
+        },
+        {
+          "name": "State",
+          "type": "string",
+          "optional": false,
+          "json_tag": "state"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ragCorporaResponse",
+      "kind": "struct",
+      "file": "rag.go",
+      "fields": [
+        {
+          "name": "Corpora",
+          "type": "[]RAGCorpus",
+          "optional": false,
+          "json_tag": "corpora"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SurrealRAGSearchRequest",
+      "kind": "struct",
+      "file": "rag.go",
+      "fields": [
+        {
+          "name": "Query",
+          "type": "string",
+          "optional": false,
+          "json_tag": "query"
+        },
+        {
+          "name": "Provider",
+          "type": "string",
+          "optional": true,
+          "json_tag": "provider"
+        },
+        {
+          "name": "Limit",
+          "type": "int",
+          "optional": true,
+          "json_tag": "limit"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SurrealRAGSearchResponse",
+      "kind": "struct",
+      "file": "rag.go",
+      "fields": [
+        {
+          "name": "Results",
+          "type": "[]SurrealRAGResult",
+          "optional": false,
+          "json_tag": "results"
+        },
+        {
+          "name": "Query",
+          "type": "string",
+          "optional": false,
+          "json_tag": "query"
+        },
+        {
+          "name": "Provider",
+          "type": "string",
+          "optional": true,
+          "json_tag": "provider"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SurrealRAGResult",
+      "kind": "struct",
+      "file": "rag.go",
+      "fields": [
+        {
+          "name": "Provider",
+          "type": "string",
+          "optional": false,
+          "json_tag": "provider"
+        },
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": false,
+          "json_tag": "title"
+        },
+        {
+          "name": "Heading",
+          "type": "string",
+          "optional": false,
+          "json_tag": "heading"
+        },
+        {
+          "name": "SourceFile",
+          "type": "string",
+          "optional": false,
+          "json_tag": "source_file"
+        },
+        {
+          "name": "Content",
+          "type": "string",
+          "optional": false,
+          "json_tag": "content"
+        },
+        {
+          "name": "Score",
+          "type": "float64",
+          "optional": false,
+          "json_tag": "score"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SurrealRAGProviderInfo",
+      "kind": "struct",
+      "file": "rag_providers.go",
+      "fields": [
+        {
+          "name": "Provider",
+          "type": "string",
+          "optional": false,
+          "json_tag": "provider"
+        },
+        {
+          "name": "Chunks",
+          "type": "int",
+          "optional": false,
+          "json_tag": "chunks"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SurrealRAGProvidersResponse",
+      "kind": "struct",
+      "file": "rag_providers.go",
+      "fields": [
+        {
+          "name": "Providers",
+          "type": "[]SurrealRAGProviderInfo",
+          "optional": false,
+          "json_tag": "providers"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "RealtimeConfig",
+      "kind": "struct",
+      "file": "realtime.go",
+      "fields": [
+        {
+          "name": "Voice",
+          "type": "string",
+          "optional": true,
+          "json_tag": "voice"
+        },
+        {
+          "name": "Instructions",
+          "type": "string",
+          "optional": true,
+          "json_tag": "instructions"
+        },
+        {
+          "name": "SampleRate",
+          "type": "int",
+          "optional": true,
+          "json_tag": "sample_rate"
+        },
+        {
+          "name": "Tools",
+          "type": "[]json.RawMessage",
+          "optional": true,
+          "json_tag": "tools"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "RealtimeEvent",
+      "kind": "struct",
+      "file": "realtime.go",
+      "fields": [
+        {
+          "name": "Type",
+          "type": "string",
+          "optional": false,
+          "json_tag": "type"
+        },
+        {
+          "name": "Delta",
+          "type": "string",
+          "optional": true,
+          "json_tag": "delta"
+        },
+        {
+          "name": "Transcript",
+          "type": "string",
+          "optional": true,
+          "json_tag": "transcript"
+        },
+        {
+          "name": "Source",
+          "type": "string",
+          "optional": true,
+          "json_tag": "source"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": true,
+          "json_tag": "name"
+        },
+        {
+          "name": "CallID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "call_id"
+        },
+        {
+          "name": "Arguments",
+          "type": "string",
+          "optional": true,
+          "json_tag": "arguments"
+        },
+        {
+          "name": "Message",
+          "type": "string",
+          "optional": true,
+          "json_tag": "message"
+        },
+        {
+          "name": "Raw",
+          "type": "json.RawMessage",
+          "optional": true,
+          "json_tag": "raw"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "RealtimeSession",
+      "kind": "struct",
+      "file": "realtime.go",
+      "fields": [
+        {
+          "name": "EphemeralToken",
+          "type": "string",
+          "optional": false,
+          "json_tag": "ephemeral_token"
+        },
+        {
+          "name": "URL",
+          "type": "string",
+          "optional": false,
+          "json_tag": "url"
+        },
+        {
+          "name": "SignedURL",
+          "type": "string",
+          "optional": false,
+          "json_tag": "signed_url"
+        },
+        {
+          "name": "SessionID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "session_id"
+        },
+        {
+          "name": "Provider",
+          "type": "string",
+          "optional": false,
+          "json_tag": "provider"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SearchOptions",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Count",
+          "type": "int",
+          "optional": true,
+          "json_tag": "count"
+        },
+        {
+          "name": "Offset",
+          "type": "int",
+          "optional": true,
+          "json_tag": "offset"
+        },
+        {
+          "name": "Country",
+          "type": "string",
+          "optional": true,
+          "json_tag": "country"
+        },
+        {
+          "name": "Language",
+          "type": "string",
+          "optional": true,
+          "json_tag": "language"
+        },
+        {
+          "name": "Freshness",
+          "type": "string",
+          "optional": true,
+          "json_tag": "freshness"
+        },
+        {
+          "name": "SafeSearch",
+          "type": "string",
+          "optional": true,
+          "json_tag": "safe_search"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ContextOptions",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Count",
+          "type": "int",
+          "optional": true,
+          "json_tag": "count"
+        },
+        {
+          "name": "Country",
+          "type": "string",
+          "optional": true,
+          "json_tag": "country"
+        },
+        {
+          "name": "Language",
+          "type": "string",
+          "optional": true,
+          "json_tag": "language"
+        },
+        {
+          "name": "Freshness",
+          "type": "string",
+          "optional": true,
+          "json_tag": "freshness"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SearchMessage",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Role",
+          "type": "string",
+          "optional": false,
+          "json_tag": "role"
+        },
+        {
+          "name": "Content",
+          "type": "string",
+          "optional": false,
+          "json_tag": "content"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "WebSearchRequest",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Query",
+          "type": "string",
+          "optional": false,
+          "json_tag": "query"
+        },
+        {
+          "name": "Count",
+          "type": "int",
+          "optional": true,
+          "json_tag": "count"
+        },
+        {
+          "name": "Offset",
+          "type": "int",
+          "optional": true,
+          "json_tag": "offset"
+        },
+        {
+          "name": "Country",
+          "type": "string",
+          "optional": true,
+          "json_tag": "country"
+        },
+        {
+          "name": "Language",
+          "type": "string",
+          "optional": true,
+          "json_tag": "language"
+        },
+        {
+          "name": "Freshness",
+          "type": "string",
+          "optional": true,
+          "json_tag": "freshness"
+        },
+        {
+          "name": "Safesearch",
+          "type": "string",
+          "optional": true,
+          "json_tag": "safesearch"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SearchContextRequest",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Query",
+          "type": "string",
+          "optional": false,
+          "json_tag": "query"
+        },
+        {
+          "name": "Count",
+          "type": "int",
+          "optional": true,
+          "json_tag": "count"
+        },
+        {
+          "name": "Country",
+          "type": "string",
+          "optional": true,
+          "json_tag": "country"
+        },
+        {
+          "name": "Language",
+          "type": "string",
+          "optional": true,
+          "json_tag": "language"
+        },
+        {
+          "name": "Freshness",
+          "type": "string",
+          "optional": true,
+          "json_tag": "freshness"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SearchContextChunk",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Content",
+          "type": "string",
+          "optional": false,
+          "json_tag": "content"
+        },
+        {
+          "name": "URL",
+          "type": "string",
+          "optional": false,
+          "json_tag": "url"
+        },
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": false,
+          "json_tag": "title"
+        },
+        {
+          "name": "Score",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "score"
+        },
+        {
+          "name": "ContentType",
+          "type": "string",
+          "optional": true,
+          "json_tag": "content_type"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SearchContextSource",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "URL",
+          "type": "string",
+          "optional": false,
+          "json_tag": "url"
+        },
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": false,
+          "json_tag": "title"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SearchContextResponse",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Chunks",
+          "type": "[]SearchContextChunk",
+          "optional": false,
+          "json_tag": "chunks"
+        },
+        {
+          "name": "Sources",
+          "type": "[]SearchContextSource",
+          "optional": true,
+          "json_tag": "sources"
+        },
+        {
+          "name": "Query",
+          "type": "string",
+          "optional": false,
+          "json_tag": "query"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SearchAnswerMessage",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Role",
+          "type": "string",
+          "optional": false,
+          "json_tag": "role"
+        },
+        {
+          "name": "Content",
+          "type": "string",
+          "optional": false,
+          "json_tag": "content"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SearchAnswerRequest",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Messages",
+          "type": "[]SearchAnswerMessage",
+          "optional": false,
+          "json_tag": "messages"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SearchAnswerCitation",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "URL",
+          "type": "string",
+          "optional": false,
+          "json_tag": "url"
+        },
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": false,
+          "json_tag": "title"
+        },
+        {
+          "name": "Snippet",
+          "type": "string",
+          "optional": true,
+          "json_tag": "snippet"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "InfoboxResult",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": false,
+          "json_tag": "title"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": false,
+          "json_tag": "description"
+        },
+        {
+          "name": "URL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "url"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "DiscussionResult",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": false,
+          "json_tag": "title"
+        },
+        {
+          "name": "URL",
+          "type": "string",
+          "optional": false,
+          "json_tag": "url"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": false,
+          "json_tag": "description"
+        },
+        {
+          "name": "Age",
+          "type": "string",
+          "optional": true,
+          "json_tag": "age"
+        },
+        {
+          "name": "Forum",
+          "type": "string",
+          "optional": true,
+          "json_tag": "forum"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ResponseMeta",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "webSearchRequest",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Query",
+          "type": "string",
+          "optional": false,
+          "json_tag": "query"
+        },
+        {
+          "name": "Count",
+          "type": "int",
+          "optional": true,
+          "json_tag": "count"
+        },
+        {
+          "name": "Offset",
+          "type": "int",
+          "optional": true,
+          "json_tag": "offset"
+        },
+        {
+          "name": "Country",
+          "type": "string",
+          "optional": true,
+          "json_tag": "country"
+        },
+        {
+          "name": "Language",
+          "type": "string",
+          "optional": true,
+          "json_tag": "language"
+        },
+        {
+          "name": "Freshness",
+          "type": "string",
+          "optional": true,
+          "json_tag": "freshness"
+        },
+        {
+          "name": "SafeSearch",
+          "type": "string",
+          "optional": true,
+          "json_tag": "safe_search"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "contextSearchRequest",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Query",
+          "type": "string",
+          "optional": false,
+          "json_tag": "query"
+        },
+        {
+          "name": "Count",
+          "type": "int",
+          "optional": true,
+          "json_tag": "count"
+        },
+        {
+          "name": "Country",
+          "type": "string",
+          "optional": true,
+          "json_tag": "country"
+        },
+        {
+          "name": "Language",
+          "type": "string",
+          "optional": true,
+          "json_tag": "language"
+        },
+        {
+          "name": "Freshness",
+          "type": "string",
+          "optional": true,
+          "json_tag": "freshness"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "searchAnswerRequest",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Messages",
+          "type": "[]SearchMessage",
+          "optional": false,
+          "json_tag": "messages"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "WebSearchResponse",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Query",
+          "type": "string",
+          "optional": false,
+          "json_tag": "query"
+        },
+        {
+          "name": "Web",
+          "type": "[]WebResult",
+          "optional": true,
+          "json_tag": "web"
+        },
+        {
+          "name": "News",
+          "type": "[]NewsResult",
+          "optional": true,
+          "json_tag": "news"
+        },
+        {
+          "name": "Videos",
+          "type": "[]VideoResult",
+          "optional": true,
+          "json_tag": "videos"
+        },
+        {
+          "name": "Infobox",
+          "type": "*Infobox",
+          "optional": true,
+          "json_tag": "infobox"
+        },
+        {
+          "name": "Discussions",
+          "type": "[]Discussion",
+          "optional": true,
+          "json_tag": "discussions"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "-"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "-"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "WebResult",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": false,
+          "json_tag": "title"
+        },
+        {
+          "name": "URL",
+          "type": "string",
+          "optional": false,
+          "json_tag": "url"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": false,
+          "json_tag": "description"
+        },
+        {
+          "name": "Age",
+          "type": "string",
+          "optional": true,
+          "json_tag": "age"
+        },
+        {
+          "name": "Favicon",
+          "type": "string",
+          "optional": true,
+          "json_tag": "favicon"
+        },
+        {
+          "name": "Thumbnail",
+          "type": "string",
+          "optional": true,
+          "json_tag": "thumbnail"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "NewsResult",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": false,
+          "json_tag": "title"
+        },
+        {
+          "name": "URL",
+          "type": "string",
+          "optional": false,
+          "json_tag": "url"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": false,
+          "json_tag": "description"
+        },
+        {
+          "name": "Age",
+          "type": "string",
+          "optional": true,
+          "json_tag": "age"
+        },
+        {
+          "name": "Thumbnail",
+          "type": "string",
+          "optional": true,
+          "json_tag": "thumbnail"
+        },
+        {
+          "name": "Source",
+          "type": "string",
+          "optional": true,
+          "json_tag": "source"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "VideoResult",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": false,
+          "json_tag": "title"
+        },
+        {
+          "name": "URL",
+          "type": "string",
+          "optional": false,
+          "json_tag": "url"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": false,
+          "json_tag": "description"
+        },
+        {
+          "name": "Age",
+          "type": "string",
+          "optional": true,
+          "json_tag": "age"
+        },
+        {
+          "name": "Thumbnail",
+          "type": "string",
+          "optional": true,
+          "json_tag": "thumbnail"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "Infobox",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": false,
+          "json_tag": "title"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": false,
+          "json_tag": "description"
+        },
+        {
+          "name": "URL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "url"
+        },
+        {
+          "name": "Thumbnail",
+          "type": "string",
+          "optional": true,
+          "json_tag": "thumbnail"
+        },
+        {
+          "name": "Attributes",
+          "type": "map[string]string",
+          "optional": true,
+          "json_tag": "attributes"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "Discussion",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": false,
+          "json_tag": "title"
+        },
+        {
+          "name": "URL",
+          "type": "string",
+          "optional": false,
+          "json_tag": "url"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": false,
+          "json_tag": "description"
+        },
+        {
+          "name": "Age",
+          "type": "string",
+          "optional": true,
+          "json_tag": "age"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "LLMContextResponse",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Query",
+          "type": "string",
+          "optional": false,
+          "json_tag": "query"
+        },
+        {
+          "name": "Chunks",
+          "type": "[]ContextChunk",
+          "optional": true,
+          "json_tag": "chunks"
+        },
+        {
+          "name": "Sources",
+          "type": "[]string",
+          "optional": true,
+          "json_tag": "sources"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "-"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "-"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ContextChunk",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Content",
+          "type": "string",
+          "optional": false,
+          "json_tag": "content"
+        },
+        {
+          "name": "URL",
+          "type": "string",
+          "optional": false,
+          "json_tag": "url"
+        },
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": false,
+          "json_tag": "title"
+        },
+        {
+          "name": "Score",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "score"
+        },
+        {
+          "name": "ContentType",
+          "type": "string",
+          "optional": true,
+          "json_tag": "content_type"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SearchAnswerResponse",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "ID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "id"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "Choices",
+          "type": "[]SearchAnswerChoice",
+          "optional": false,
+          "json_tag": "choices"
+        },
+        {
+          "name": "Citations",
+          "type": "[]Citation",
+          "optional": true,
+          "json_tag": "citations"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "-"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "-"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SearchAnswerChoice",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "Index",
+          "type": "int",
+          "optional": false,
+          "json_tag": "index"
+        },
+        {
+          "name": "Message",
+          "type": "SearchMessage",
+          "optional": false,
+          "json_tag": "message"
+        },
+        {
+          "name": "FinishReason",
+          "type": "string",
+          "optional": false,
+          "json_tag": "finish_reason"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "Citation",
+      "kind": "struct",
+      "file": "search.go",
+      "fields": [
+        {
+          "name": "URL",
+          "type": "string",
+          "optional": false,
+          "json_tag": "url"
+        },
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": false,
+          "json_tag": "title"
+        },
+        {
+          "name": "Snippet",
+          "type": "string",
+          "optional": true,
+          "json_tag": "snippet"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SessionChatRequest",
+      "kind": "struct",
+      "file": "session.go",
+      "fields": [
+        {
+          "name": "SessionID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "session_id"
+        },
+        {
+          "name": "Message",
+          "type": "string",
+          "optional": true,
+          "json_tag": "message"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": true,
+          "json_tag": "model"
+        },
+        {
+          "name": "Tools",
+          "type": "[]ChatTool",
+          "optional": true,
+          "json_tag": "tools"
+        },
+        {
+          "name": "ToolResults",
+          "type": "[]SessionToolResult",
+          "optional": true,
+          "json_tag": "tool_results"
+        },
+        {
+          "name": "Stream",
+          "type": "bool",
+          "optional": true,
+          "json_tag": "stream"
+        },
+        {
+          "name": "SystemPrompt",
+          "type": "string",
+          "optional": true,
+          "json_tag": "system_prompt"
+        },
+        {
+          "name": "ContextConfig",
+          "type": "*ContextConfig",
+          "optional": true,
+          "json_tag": "context_config"
+        },
+        {
+          "name": "ProviderOptions",
+          "type": "map[string]json.RawMessage",
+          "optional": true,
+          "json_tag": "provider_options"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SessionToolResult",
+      "kind": "struct",
+      "file": "session.go",
+      "fields": [
+        {
+          "name": "ToolCallID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "tool_call_id"
+        },
+        {
+          "name": "Content",
+          "type": "string",
+          "optional": false,
+          "json_tag": "content"
+        },
+        {
+          "name": "IsError",
+          "type": "bool",
+          "optional": true,
+          "json_tag": "is_error"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ContextConfig",
+      "kind": "struct",
+      "file": "session.go",
+      "fields": [
+        {
+          "name": "MaxTokens",
+          "type": "int",
+          "optional": true,
+          "json_tag": "max_tokens"
+        },
+        {
+          "name": "AutoCompact",
+          "type": "*bool",
+          "optional": true,
+          "json_tag": "auto_compact"
+        },
+        {
+          "name": "CompactionThreshold",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "compaction_threshold"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ToolResult",
+      "kind": "struct",
+      "file": "session.go",
+      "fields": [
+        {
+          "name": "ToolCallID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "tool_call_id"
+        },
+        {
+          "name": "Content",
+          "type": "string",
+          "optional": false,
+          "json_tag": "content"
+        },
+        {
+          "name": "IsError",
+          "type": "*bool",
+          "optional": true,
+          "json_tag": "is_error"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SessionContext",
+      "kind": "struct",
+      "file": "session.go",
+      "fields": [
+        {
+          "name": "TurnCount",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "turn_count"
+        },
+        {
+          "name": "EstimatedTokens",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "estimated_tokens"
+        },
+        {
+          "name": "Compacted",
+          "type": "bool",
+          "optional": true,
+          "json_tag": "compacted"
+        },
+        {
+          "name": "CompactionNote",
+          "type": "string",
+          "optional": true,
+          "json_tag": "compaction_note"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SessionChatResponse",
+      "kind": "struct",
+      "file": "session.go",
+      "fields": [
+        {
+          "name": "SessionID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "session_id"
+        },
+        {
+          "name": "Response",
+          "type": "*ChatResponse",
+          "optional": false,
+          "json_tag": "response"
+        },
+        {
+          "name": "Context",
+          "type": "*ContextMetadata",
+          "optional": true,
+          "json_tag": "context"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "ContextMetadata",
+      "kind": "struct",
+      "file": "session.go",
+      "fields": [
+        {
+          "name": "TurnCount",
+          "type": "int",
+          "optional": false,
+          "json_tag": "turn_count"
+        },
+        {
+          "name": "EstimatedTokens",
+          "type": "int",
+          "optional": false,
+          "json_tag": "estimated_tokens"
+        },
+        {
+          "name": "Compacted",
+          "type": "bool",
+          "optional": true,
+          "json_tag": "compacted"
+        },
+        {
+          "name": "CompactionNote",
+          "type": "string",
+          "optional": true,
+          "json_tag": "compaction_note"
+        },
+        {
+          "name": "ToolsCleared",
+          "type": "int",
+          "optional": true,
+          "json_tag": "tools_cleared"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "VideoRequest",
+      "kind": "struct",
+      "file": "video.go",
+      "fields": [
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "Prompt",
+          "type": "string",
+          "optional": false,
+          "json_tag": "prompt"
+        },
+        {
+          "name": "DurationSeconds",
+          "type": "int",
+          "optional": true,
+          "json_tag": "duration_seconds"
+        },
+        {
+          "name": "AspectRatio",
+          "type": "string",
+          "optional": true,
+          "json_tag": "aspect_ratio"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "VideoResponse",
+      "kind": "struct",
+      "file": "video.go",
+      "fields": [
+        {
+          "name": "Videos",
+          "type": "[]GeneratedVideo",
+          "optional": false,
+          "json_tag": "videos"
+        },
+        {
+          "name": "Model",
+          "type": "string",
+          "optional": false,
+          "json_tag": "model"
+        },
+        {
+          "name": "CostTicks",
+          "type": "int64",
+          "optional": false,
+          "json_tag": "cost_ticks"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "GeneratedVideo",
+      "kind": "struct",
+      "file": "video.go",
+      "fields": [
+        {
+          "name": "Base64Data",
+          "type": "string",
+          "optional": false,
+          "json_tag": "base64"
+        },
+        {
+          "name": "Format",
+          "type": "string",
+          "optional": false,
+          "json_tag": "format"
+        },
+        {
+          "name": "SizeBytes",
+          "type": "int",
+          "optional": false,
+          "json_tag": "size_bytes"
+        },
+        {
+          "name": "Index",
+          "type": "int",
+          "optional": false,
+          "json_tag": "index"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "StudioClip",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "AvatarID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "avatar_id"
+        },
+        {
+          "name": "VoiceID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "voice_id"
+        },
+        {
+          "name": "Script",
+          "type": "string",
+          "optional": true,
+          "json_tag": "script"
+        },
+        {
+          "name": "Background",
+          "type": "any",
+          "optional": true,
+          "json_tag": "background"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "StudioVideoRequest",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": true,
+          "json_tag": "title"
+        },
+        {
+          "name": "Clips",
+          "type": "[]StudioClip",
+          "optional": false,
+          "json_tag": "clips"
+        },
+        {
+          "name": "Dimension",
+          "type": "string",
+          "optional": true,
+          "json_tag": "dimension"
+        },
+        {
+          "name": "AspectRatio",
+          "type": "string",
+          "optional": true,
+          "json_tag": "aspect_ratio"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "TranslateRequest",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "VideoURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "video_url"
+        },
+        {
+          "name": "VideoBase64",
+          "type": "string",
+          "optional": true,
+          "json_tag": "video_base64"
+        },
+        {
+          "name": "TargetLanguage",
+          "type": "string",
+          "optional": false,
+          "json_tag": "target_language"
+        },
+        {
+          "name": "SourceLanguage",
+          "type": "string",
+          "optional": true,
+          "json_tag": "source_language"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "Avatar",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "AvatarID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "avatar_id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": true,
+          "json_tag": "name"
+        },
+        {
+          "name": "Gender",
+          "type": "string",
+          "optional": true,
+          "json_tag": "gender"
+        },
+        {
+          "name": "PreviewURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "preview_url"
+        },
+        {
+          "name": "Extra",
+          "type": "map[string]any",
+          "optional": true,
+          "json_tag": "extra"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AvatarsResponse",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "Avatars",
+          "type": "[]Avatar",
+          "optional": false,
+          "json_tag": "avatars"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "VideoTemplate",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "TemplateID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "template_id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": true,
+          "json_tag": "name"
+        },
+        {
+          "name": "PreviewURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "preview_url"
+        },
+        {
+          "name": "Extra",
+          "type": "map[string]any",
+          "optional": true,
+          "json_tag": "extra"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "VideoTemplatesResponse",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "Templates",
+          "type": "[]VideoTemplate",
+          "optional": false,
+          "json_tag": "templates"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "HeyGenVoice",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "VoiceID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "voice_id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": true,
+          "json_tag": "name"
+        },
+        {
+          "name": "Language",
+          "type": "string",
+          "optional": true,
+          "json_tag": "language"
+        },
+        {
+          "name": "Gender",
+          "type": "string",
+          "optional": true,
+          "json_tag": "gender"
+        },
+        {
+          "name": "Extra",
+          "type": "map[string]any",
+          "optional": true,
+          "json_tag": "extra"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "VideoStudioRequest",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "AvatarID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "avatar_id"
+        },
+        {
+          "name": "Script",
+          "type": "string",
+          "optional": false,
+          "json_tag": "script"
+        },
+        {
+          "name": "VoiceID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "voice_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "JobAcceptedResponse",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "JobID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "job_id"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": false,
+          "json_tag": "status"
+        },
+        {
+          "name": "Type",
+          "type": "string",
+          "optional": false,
+          "json_tag": "type"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "VideoTranslateRequest",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "VideoURL",
+          "type": "string",
+          "optional": false,
+          "json_tag": "video_url"
+        },
+        {
+          "name": "OutputLanguage",
+          "type": "string",
+          "optional": false,
+          "json_tag": "output_language"
+        },
+        {
+          "name": "SourceLanguage",
+          "type": "string",
+          "optional": true,
+          "json_tag": "source_language"
+        },
+        {
+          "name": "Title",
+          "type": "string",
+          "optional": true,
+          "json_tag": "title"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "PhotoAvatarRequest",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "PhotoBase64",
+          "type": "string",
+          "optional": true,
+          "json_tag": "photo_base64"
+        },
+        {
+          "name": "Script",
+          "type": "string",
+          "optional": true,
+          "json_tag": "script"
+        },
+        {
+          "name": "VoiceID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "voice_id"
+        },
+        {
+          "name": "AspectRatio",
+          "type": "string",
+          "optional": true,
+          "json_tag": "aspect_ratio"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": true,
+          "json_tag": "name"
+        },
+        {
+          "name": "Age",
+          "type": "string",
+          "optional": true,
+          "json_tag": "age"
+        },
+        {
+          "name": "Gender",
+          "type": "string",
+          "optional": true,
+          "json_tag": "gender"
+        },
+        {
+          "name": "Ethnicity",
+          "type": "string",
+          "optional": true,
+          "json_tag": "ethnicity"
+        },
+        {
+          "name": "Orientation",
+          "type": "string",
+          "optional": true,
+          "json_tag": "orientation"
+        },
+        {
+          "name": "Pose",
+          "type": "string",
+          "optional": true,
+          "json_tag": "pose"
+        },
+        {
+          "name": "Style",
+          "type": "string",
+          "optional": true,
+          "json_tag": "style"
+        },
+        {
+          "name": "Appearance",
+          "type": "string",
+          "optional": true,
+          "json_tag": "appearance"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "DigitalTwinRequest",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "AvatarID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "avatar_id"
+        },
+        {
+          "name": "Script",
+          "type": "string",
+          "optional": true,
+          "json_tag": "script"
+        },
+        {
+          "name": "VoiceID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "voice_id"
+        },
+        {
+          "name": "AspectRatio",
+          "type": "string",
+          "optional": true,
+          "json_tag": "aspect_ratio"
+        },
+        {
+          "name": "VideoURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "video_url"
+        },
+        {
+          "name": "ConsentVideoURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "consent_video_url"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": true,
+          "json_tag": "name"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": true,
+          "json_tag": "description"
+        },
+        {
+          "name": "AvatarGroupID",
+          "type": "string",
+          "optional": true,
+          "json_tag": "avatar_group_id"
+        },
+        {
+          "name": "CallbackURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "callback_url"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "HeyGenAvatarsResponse",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "Avatars",
+          "type": "[]any",
+          "optional": false,
+          "json_tag": "avatars"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "HeyGenTemplatesResponse",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "Templates",
+          "type": "[]any",
+          "optional": false,
+          "json_tag": "templates"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "HeyGenVoicesResponse",
+      "kind": "struct",
+      "file": "video_heygen.go",
+      "fields": [
+        {
+          "name": "Voices",
+          "type": "[]any",
+          "optional": false,
+          "json_tag": "voices"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "Voice",
+      "kind": "struct",
+      "file": "voices.go",
+      "fields": [
+        {
+          "name": "VoiceID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "voice_id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": false,
+          "json_tag": "name"
+        },
+        {
+          "name": "Provider",
+          "type": "string",
+          "optional": true,
+          "json_tag": "provider"
+        },
+        {
+          "name": "Languages",
+          "type": "[]string",
+          "optional": true,
+          "json_tag": "languages"
+        },
+        {
+          "name": "Gender",
+          "type": "string",
+          "optional": true,
+          "json_tag": "gender"
+        },
+        {
+          "name": "IsCloned",
+          "type": "*bool",
+          "optional": true,
+          "json_tag": "is_cloned"
+        },
+        {
+          "name": "PreviewURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "preview_url"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "CloneVoiceFile",
+      "kind": "struct",
+      "file": "voices.go",
+      "fields": [
+        {
+          "name": "Filename",
+          "type": "string",
+          "optional": false,
+          "json_tag": "filename"
+        },
+        {
+          "name": "Data",
+          "type": "[]byte",
+          "optional": false,
+          "json_tag": "data"
+        },
+        {
+          "name": "MimeType",
+          "type": "string",
+          "optional": false,
+          "json_tag": "mime_type"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "VoiceInfo",
+      "kind": "struct",
+      "file": "voices.go",
+      "fields": [
+        {
+          "name": "VoiceID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "voice_id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": false,
+          "json_tag": "name"
+        },
+        {
+          "name": "Category",
+          "type": "string",
+          "optional": false,
+          "json_tag": "category"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": true,
+          "json_tag": "description"
+        },
+        {
+          "name": "PreviewURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "preview_url"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "VoicesResponse",
+      "kind": "struct",
+      "file": "voices.go",
+      "fields": [
+        {
+          "name": "Voices",
+          "type": "[]VoiceInfo",
+          "optional": false,
+          "json_tag": "voices"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "CloneVoiceRequest",
+      "kind": "struct",
+      "file": "voices.go",
+      "fields": [
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": false,
+          "json_tag": "name"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": true,
+          "json_tag": "description"
+        },
+        {
+          "name": "AudioSamples",
+          "type": "[]string",
+          "optional": false,
+          "json_tag": "audio_samples"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "CloneVoiceResponse",
+      "kind": "struct",
+      "file": "voices.go",
+      "fields": [
+        {
+          "name": "VoiceID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "voice_id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": true,
+          "json_tag": "name"
+        },
+        {
+          "name": "Status",
+          "type": "string",
+          "optional": true,
+          "json_tag": "status"
+        },
+        {
+          "name": "RequestID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "request_id"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SharedVoice",
+      "kind": "struct",
+      "file": "voices.go",
+      "fields": [
+        {
+          "name": "PublicOwnerID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "public_owner_id"
+        },
+        {
+          "name": "VoiceID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "voice_id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": false,
+          "json_tag": "name"
+        },
+        {
+          "name": "Category",
+          "type": "string",
+          "optional": true,
+          "json_tag": "category"
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "optional": true,
+          "json_tag": "description"
+        },
+        {
+          "name": "PreviewURL",
+          "type": "string",
+          "optional": true,
+          "json_tag": "preview_url"
+        },
+        {
+          "name": "Gender",
+          "type": "string",
+          "optional": true,
+          "json_tag": "gender"
+        },
+        {
+          "name": "Age",
+          "type": "string",
+          "optional": true,
+          "json_tag": "age"
+        },
+        {
+          "name": "Accent",
+          "type": "string",
+          "optional": true,
+          "json_tag": "accent"
+        },
+        {
+          "name": "Language",
+          "type": "string",
+          "optional": true,
+          "json_tag": "language"
+        },
+        {
+          "name": "UseCase",
+          "type": "string",
+          "optional": true,
+          "json_tag": "use_case"
+        },
+        {
+          "name": "Rate",
+          "type": "float64",
+          "optional": true,
+          "json_tag": "rate"
+        },
+        {
+          "name": "ClonedByCount",
+          "type": "int64",
+          "optional": true,
+          "json_tag": "cloned_by_count"
+        },
+        {
+          "name": "FreeUsersAllowed",
+          "type": "bool",
+          "optional": true,
+          "json_tag": "free_users_allowed"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "SharedVoicesResponse",
+      "kind": "struct",
+      "file": "voices.go",
+      "fields": [
+        {
+          "name": "Voices",
+          "type": "[]SharedVoice",
+          "optional": false,
+          "json_tag": "voices"
+        },
+        {
+          "name": "NextCursor",
+          "type": "string",
+          "optional": true,
+          "json_tag": "next_cursor"
+        },
+        {
+          "name": "HasMore",
+          "type": "bool",
+          "optional": false,
+          "json_tag": "has_more"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AddVoiceFromLibraryRequest",
+      "kind": "struct",
+      "file": "voices.go",
+      "fields": [
+        {
+          "name": "PublicOwnerID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "public_owner_id"
+        },
+        {
+          "name": "VoiceID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "voice_id"
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "optional": true,
+          "json_tag": "name"
+        }
+      ]
+    },
+    {
+      "sdk": "go",
+      "name": "AddVoiceFromLibraryResponse",
+      "kind": "struct",
+      "file": "voices.go",
+      "fields": [
+        {
+          "name": "VoiceID",
+          "type": "string",
+          "optional": false,
+          "json_tag": "voice_id"
+        }
+      ]
+    }
+  ],
+  "updated_at": "2026-03-23T20:50:50.903946+01:00"
+}

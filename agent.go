@@ -28,19 +28,31 @@ type AgentRequest struct {
 	ContextConfig *ContextConfig `json:"context_config,omitempty"`
 }
 
-// AgentWorkerConfig defines a worker in the agent team.
-type AgentWorkerConfig struct {
+// AgentWorker describes a worker agent in a multi-agent run.
+type AgentWorker struct {
 	// Name is the worker name (e.g. "reader", "coder").
 	Name string `json:"name"`
 
 	// Model is the model ID for this worker.
-	Model string `json:"model"`
+	Model string `json:"model,omitempty"`
 
 	// Tier is the cost tier: "cheap", "mid", or "expensive".
-	Tier string `json:"tier"`
+	Tier string `json:"tier,omitempty"`
 
 	// Description explains what this worker is good at.
-	Description string `json:"description"`
+	Description string `json:"description,omitempty"`
+}
+
+// AgentWorkerConfig is an alias for AgentWorker for backwards compatibility.
+type AgentWorkerConfig = AgentWorker
+
+// AgentStreamEvent is a single event from an agent or mission SSE stream.
+type AgentStreamEvent struct {
+	// EventType is the event type (e.g. "step", "thought", "tool_call", "tool_result", "message", "error", "done").
+	EventType string `json:"type"`
+
+	// Data contains the raw JSON payload for the caller to interpret.
+	Data map[string]any `json:"data,omitempty"`
 }
 
 // AgentEvent is a single SSE event from an agent run stream.
@@ -111,17 +123,20 @@ type MissionRequest struct {
 	ContextConfig *ContextConfig `json:"context_config,omitempty"`
 }
 
-// MissionWorkerConfig defines a worker in the mission team.
-type MissionWorkerConfig struct {
+// MissionWorker describes a named worker for a mission.
+type MissionWorker struct {
 	// Model is the model ID for this worker.
-	Model string `json:"model"`
+	Model string `json:"model,omitempty"`
 
 	// Tier is the cost tier: "cheap", "mid", or "expensive".
-	Tier string `json:"tier"`
+	Tier string `json:"tier,omitempty"`
 
 	// Description explains what this worker is good at.
 	Description string `json:"description,omitempty"`
 }
+
+// MissionWorkerConfig is an alias for MissionWorker for backwards compatibility.
+type MissionWorkerConfig = MissionWorker
 
 // MissionEvent is a single SSE event from a mission run stream.
 // Events include: "mission_started", "step_detail", "mission_completed",

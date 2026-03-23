@@ -2,6 +2,18 @@ package qai
 
 import "context"
 
+// TtsRequest is the request body for text-to-speech (sdk-graph canonical name).
+type TtsRequest = TTSRequest
+
+// TtsResponse is the response from text-to-speech (sdk-graph canonical name).
+type TtsResponse = TTSResponse
+
+// SttRequest is the request body for speech-to-text (sdk-graph canonical name).
+type SttRequest = STTRequest
+
+// SttResponse is the response from speech-to-text (sdk-graph canonical name).
+type SttResponse = STTResponse
+
 // TTSRequest is the request body for text-to-speech.
 type TTSRequest struct {
 	// Model is the TTS model (e.g. "tts-1", "eleven_multilingual_v2", "grok-3-tts").

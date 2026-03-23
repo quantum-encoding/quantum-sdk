@@ -2,6 +2,66 @@ package qai
 
 import "context"
 
+// ChunkRequest is the request body for document chunking (sdk-graph canonical name).
+type ChunkRequest struct {
+	// FileBase64 is the base64-encoded file content.
+	FileBase64 string `json:"file_base64"`
+
+	// Filename is the original filename.
+	Filename string `json:"filename"`
+
+	// MaxChunkTokens is the maximum chunk size in tokens.
+	MaxChunkTokens int `json:"max_chunk_tokens,omitempty"`
+
+	// OverlapTokens is the overlap between chunks in tokens.
+	OverlapTokens int `json:"overlap_tokens,omitempty"`
+}
+
+// ChunkResponse is the response from document chunking (sdk-graph canonical name).
+type ChunkResponse struct {
+	// Chunks contains the document chunks.
+	Chunks []DocumentChunk `json:"chunks"`
+
+	// TotalChunks is the total number of chunks.
+	TotalChunks int `json:"total_chunks,omitempty"`
+
+	// CostTicks is the total cost in ticks.
+	CostTicks int64 `json:"cost_ticks"`
+
+	// RequestID is the unique request identifier.
+	RequestID string `json:"request_id"`
+}
+
+// ProcessRequest is the request body for document processing (sdk-graph canonical name).
+type ProcessRequest struct {
+	// FileBase64 is the base64-encoded file content.
+	FileBase64 string `json:"file_base64"`
+
+	// Filename is the original filename.
+	Filename string `json:"filename"`
+
+	// Prompt is the processing instructions or prompt.
+	Prompt string `json:"prompt,omitempty"`
+
+	// Model is the model to use for processing.
+	Model string `json:"model,omitempty"`
+}
+
+// ProcessResponse is the response from document processing (sdk-graph canonical name).
+type ProcessResponse struct {
+	// Content is the processed content / analysis result.
+	Content string `json:"content"`
+
+	// Model is the model used for processing.
+	Model string `json:"model,omitempty"`
+
+	// CostTicks is the total cost in ticks.
+	CostTicks int64 `json:"cost_ticks"`
+
+	// RequestID is the unique request identifier.
+	RequestID string `json:"request_id"`
+}
+
 // ChunkDocumentRequest is the request body for document chunking.
 // The file is sent as base64-encoded data in the JSON body.
 type ChunkDocumentRequest struct {
@@ -40,6 +100,9 @@ type DocumentChunk struct {
 
 	// Index is the chunk position within the document.
 	Index int `json:"index"`
+
+	// TokenCount is the estimated token count.
+	TokenCount int `json:"token_count,omitempty"`
 
 	// PageNumber is the source page number (if applicable).
 	PageNumber int `json:"page_number,omitempty"`

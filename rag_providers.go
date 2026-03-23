@@ -2,6 +2,12 @@ package qai
 
 import "context"
 
+// SurrealRagProvider is an alias for SurrealRAGProviderInfo (sdk-graph canonical name).
+type SurrealRagProvider = SurrealRAGProviderInfo
+
+// SurrealRagProvidersResponse is an alias for SurrealRAGProvidersResponse (sdk-graph canonical name).
+type SurrealRagProvidersResponse = SurrealRAGProvidersResponse
+
 // SurrealRAGProviderInfo describes a documentation provider in the SurrealDB RAG system.
 type SurrealRAGProviderInfo struct {
 	// Provider is the provider name (e.g. "xai", "claude", "heygen").

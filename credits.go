@@ -63,6 +63,9 @@ type CreditTier struct {
 
 	// DiscountPercent is the discount percentage.
 	DiscountPercent float64 `json:"discount_percent,omitempty"`
+
+	// Extra contains additional tier data.
+	Extra map[string]any `json:"extra,omitempty"`
 }
 
 // CreditTiersResponse is the response from listing credit tiers.

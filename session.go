@@ -53,8 +53,38 @@ type ContextConfig struct {
 	// MaxTokens is the maximum context window size.
 	MaxTokens int `json:"max_tokens,omitempty"`
 
+	// AutoCompact controls whether to enable automatic context compaction.
+	AutoCompact *bool `json:"auto_compact,omitempty"`
+
 	// CompactionThreshold is the percentage of max_tokens before compaction triggers.
 	CompactionThreshold float64 `json:"compaction_threshold,omitempty"`
+}
+
+// ToolResult is a tool result to feed back into the session (sdk-graph canonical name).
+type ToolResult struct {
+	// ToolCallID is the tool_use ID this result corresponds to.
+	ToolCallID string `json:"tool_call_id"`
+
+	// Content is the result content.
+	Content string `json:"content"`
+
+	// IsError indicates whether this result is an error.
+	IsError *bool `json:"is_error,omitempty"`
+}
+
+// SessionContext is context metadata returned with session responses (sdk-graph canonical name).
+type SessionContext struct {
+	// TurnCount is the number of conversation turns in the session.
+	TurnCount int64 `json:"turn_count"`
+
+	// EstimatedTokens is the estimated total tokens in the session context.
+	EstimatedTokens int64 `json:"estimated_tokens"`
+
+	// Compacted indicates whether context was compacted during this turn.
+	Compacted bool `json:"compacted,omitempty"`
+
+	// CompactionNote is a note about the compaction, if any.
+	CompactionNote string `json:"compaction_note,omitempty"`
 }
 
 // SessionChatResponse is the response from session-based chat.

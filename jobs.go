@@ -15,6 +15,9 @@ type JobCreateRequest struct {
 	// Type is the job type (e.g. "video/generate", "audio/music").
 	Type string `json:"type"`
 
+	// JobType is an alias for Type (sdk-graph canonical name).
+	JobType string `json:"job_type,omitempty"`
+
 	// Params contains model-specific job parameters.
 	Params json.RawMessage `json:"params"`
 }
@@ -266,9 +269,7 @@ type PostProcess struct {
 // Remesh submits a 3D remesh job and polls until completion.
 func (c *Client) Remesh(ctx context.Context, req *RemeshRequest) (*JobStatusResponse, error) {
 	params, _ := json.Marshal(req)
-	var p map[string]any
-	json.Unmarshal(params, &p)
-	job, err := c.CreateJob(ctx, "3d/remesh", p)
+	job, err := c.CreateJob(ctx, &JobCreateRequest{Type: "3d/remesh", Params: params})
 	if err != nil {
 		return nil, err
 	}
@@ -278,9 +279,7 @@ func (c *Client) Remesh(ctx context.Context, req *RemeshRequest) (*JobStatusResp
 // Rig submits a 3D rigging job and polls until completion.
 func (c *Client) Rig(ctx context.Context, req *RigRequest) (*JobStatusResponse, error) {
 	params, _ := json.Marshal(req)
-	var p map[string]any
-	json.Unmarshal(params, &p)
-	job, err := c.CreateJob(ctx, "3d/rig", p)
+	job, err := c.CreateJob(ctx, &JobCreateRequest{Type: "3d/rig", Params: params})
 	if err != nil {
 		return nil, err
 	}
@@ -290,19 +289,78 @@ func (c *Client) Rig(ctx context.Context, req *RigRequest) (*JobStatusResponse, 
 // Animate submits a 3D animation job and polls until completion.
 func (c *Client) Animate(ctx context.Context, req *AnimateRequest) (*JobStatusResponse, error) {
 	params, _ := json.Marshal(req)
-	var p map[string]any
-	json.Unmarshal(params, &p)
-	job, err := c.CreateJob(ctx, "3d/animate", p)
+	job, err := c.CreateJob(ctx, &JobCreateRequest{Type: "3d/animate", Params: params})
 	if err != nil {
 		return nil, err
 	}
 	return c.PollJob(ctx, job.JobID, 5*time.Second, 120)
 }
 
+// JobResponse is the response from async video job submission (sdk-graph canonical name).
+type JobResponse struct {
+	// JobID is the job identifier for polling status.
+	JobID string `json:"job_id"`
+
+	// Status is the current status.
+	Status string `json:"status"`
+
+	// CostTicks is the total cost in ticks (may be 0 until job completes).
+	CostTicks int64 `json:"cost_ticks"`
+
+	// Extra contains additional response fields.
+	Extra map[string]any `json:"extra,omitempty"`
+}
+
+// JobSummary is a summary of a job in the list response (sdk-graph canonical name).
+type JobSummary struct {
+	// JobID is the unique job identifier.
+	JobID string `json:"job_id"`
+
+	// Status is the job status.
+	Status string `json:"status"`
+
+	// JobType is the job type.
+	JobType string `json:"type,omitempty"`
+
+	// CreatedAt is the job creation timestamp.
+	CreatedAt string `json:"created_at,omitempty"`
+
+	// CompletedAt is when the job finished.
+	CompletedAt string `json:"completed_at,omitempty"`
+
+	// CostTicks is the total cost in ticks.
+	CostTicks int64 `json:"cost_ticks"`
+}
+
+// ListJobsResponse is the response from listing jobs (sdk-graph canonical name).
+type ListJobsResponse struct {
+	Jobs []JobSummary `json:"jobs"`
+}
+
+// ModelUrls contains URLs for each exported format in a remesh result.
+type ModelUrls struct {
+	GLB   string `json:"glb"`
+	FBX   string `json:"fbx"`
+	OBJ   string `json:"obj"`
+	USDZ  string `json:"usdz"`
+	STL   string `json:"stl"`
+	Blend string `json:"blend"`
+}
+
+// AnimationPostProcess describes post-processing options for animation export.
+type AnimationPostProcess struct {
+	// OperationType is the operation: "change_fps", "fbx2usdz", "extract_armature".
+	OperationType string `json:"operation_type"`
+
+	// FPS is the target FPS (for "change_fps"): 24, 25, 30, 60.
+	FPS int `json:"fps,omitempty"`
+}
+
 // RetextureRequest describes a retexture operation on a 3D model.
 type RetextureRequest struct {
 	InputTaskID      string   `json:"input_task_id,omitempty"`
 	ModelURL         string   `json:"model_url,omitempty"`
+	Prompt           string   `json:"prompt,omitempty"`
 	TextStylePrompt  string   `json:"text_style_prompt,omitempty"`
 	ImageStyleURL    string   `json:"image_style_url,omitempty"`
 	AIModel          string   `json:"ai_model,omitempty"`
@@ -315,9 +373,7 @@ type RetextureRequest struct {
 // Retexture submits a retexture job and polls until completion.
 func (c *Client) Retexture(ctx context.Context, req *RetextureRequest) (*JobStatusResponse, error) {
 	params, _ := json.Marshal(req)
-	var p map[string]any
-	json.Unmarshal(params, &p)
-	job, err := c.CreateJob(ctx, "3d/retexture", p)
+	job, err := c.CreateJob(ctx, &JobCreateRequest{Type: "3d/retexture", Params: params})
 	if err != nil {
 		return nil, err
 	}

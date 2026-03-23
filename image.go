@@ -30,6 +30,24 @@ type ImageRequest struct {
 
 	// Background is the background mode (e.g. "auto", "transparent", "opaque"). GPT-Image specific.
 	Background string `json:"background,omitempty"`
+
+	// ImageURL is the image URL or data URI for image-to-3D conversion (Meshy).
+	ImageURL string `json:"image_url,omitempty"`
+
+	// Topology is the mesh topology: "triangle" or "quad".
+	Topology string `json:"topology,omitempty"`
+
+	// TargetPolycount is the target polygon count (100-300,000).
+	TargetPolycount int `json:"target_polycount,omitempty"`
+
+	// SymmetryMode is the symmetry mode: "auto", "on", or "off".
+	SymmetryMode string `json:"symmetry_mode,omitempty"`
+
+	// PoseMode is the pose mode: "", "a-pose", or "t-pose".
+	PoseMode string `json:"pose_mode,omitempty"`
+
+	// EnablePBR generates PBR texture maps (base_color, metallic, roughness, normal).
+	EnablePBR *bool `json:"enable_pbr,omitempty"`
 }
 
 // ImageResponse is the response from image generation.

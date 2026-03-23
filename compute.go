@@ -10,11 +10,17 @@ type ComputeTemplate struct {
 	// ID is the template identifier (e.g. "gpu-t4-standard").
 	ID string `json:"id"`
 
+	// Name is a human-readable name.
+	Name string `json:"name,omitempty"`
+
 	// DisplayName is a human-readable name.
-	DisplayName string `json:"display_name"`
+	DisplayName string `json:"display_name,omitempty"`
+
+	// GPU is the GPU type description.
+	GPU string `json:"gpu,omitempty"`
 
 	// MachineType is the GCE machine type (e.g. "n1-standard-8").
-	MachineType string `json:"machine_type"`
+	MachineType string `json:"machine_type,omitempty"`
 
 	// GPUType is the GPU accelerator type (e.g. "nvidia-tesla-t4").
 	GPUType string `json:"gpu_type,omitempty"`
@@ -22,23 +28,35 @@ type ComputeTemplate struct {
 	// GPUCount is the number of GPUs attached.
 	GPUCount int `json:"gpu_count,omitempty"`
 
+	// VramGB is the VRAM per GPU in GB.
+	VramGB int `json:"vram_gb,omitempty"`
+
 	// VCPUs is the number of virtual CPUs.
-	VCPUs int `json:"vcpus"`
+	VCPUs int `json:"vcpus,omitempty"`
+
+	// RamGB is the RAM in GB.
+	RamGB int `json:"ram_gb,omitempty"`
 
 	// MemoryGB is the amount of RAM in gigabytes.
-	MemoryGB int `json:"memory_gb"`
+	MemoryGB int `json:"memory_gb,omitempty"`
 
 	// DiskGB is the boot disk size in gigabytes.
-	DiskGB int `json:"disk_gb"`
+	DiskGB int `json:"disk_gb,omitempty"`
+
+	// PricePerHourUSD is the price per hour in USD.
+	PricePerHourUSD float64 `json:"price_per_hour_usd,omitempty"`
 
 	// HourlyUSD is the on-demand hourly rate in US dollars.
-	HourlyUSD float64 `json:"hourly_usd"`
+	HourlyUSD float64 `json:"hourly_usd,omitempty"`
 
 	// SpotHourlyUSD is the spot/preemptible hourly rate (if available).
 	SpotHourlyUSD float64 `json:"spot_hourly_usd,omitempty"`
 
 	// SpotAllowed indicates whether spot instances are available.
 	SpotAllowed bool `json:"spot_allowed,omitempty"`
+
+	// Zones lists the available zones.
+	Zones []string `json:"zones,omitempty"`
 
 	// AvailableZones lists the GCP zones where this template can be provisioned.
 	AvailableZones []string `json:"available_zones,omitempty"`
@@ -79,23 +97,59 @@ type ProvisionResponse struct {
 	// Status is the initial instance status (e.g. "provisioning").
 	Status string `json:"status"`
 
+	// Template is the template that was provisioned.
+	Template string `json:"template,omitempty"`
+
 	// Zone is the GCP zone where the instance is being created.
 	Zone string `json:"zone"`
 
+	// SSHAddress is the SSH connection address.
+	SSHAddress string `json:"ssh_address,omitempty"`
+
+	// PricePerHourUSD is the estimated price per hour.
+	PricePerHourUSD float64 `json:"price_per_hour_usd,omitempty"`
+
 	// MachineType is the GCE machine type.
-	MachineType string `json:"machine_type"`
+	MachineType string `json:"machine_type,omitempty"`
 
 	// GPUType is the GPU accelerator type.
 	GPUType string `json:"gpu_type,omitempty"`
 
 	// HourlyUSD is the hourly rate being charged.
-	HourlyUSD float64 `json:"hourly_usd"`
+	HourlyUSD float64 `json:"hourly_usd,omitempty"`
 
 	// CostUSD is the initial cost (1-hour minimum).
-	CostUSD float64 `json:"cost_usd"`
+	CostUSD float64 `json:"cost_usd,omitempty"`
 
 	// EstimatedBootSecs is the estimated time to boot.
 	EstimatedBootSecs int `json:"estimated_boot_secs,omitempty"`
+}
+
+// ComputeInstance is a running compute instance (sdk-graph canonical name).
+type ComputeInstance struct {
+	// ID is the instance identifier.
+	ID string `json:"id"`
+
+	// Status is the current status (e.g. "running", "provisioning", "stopped").
+	Status string `json:"status"`
+
+	// Template is the template used.
+	Template string `json:"template,omitempty"`
+
+	// Zone is the GCP zone.
+	Zone string `json:"zone,omitempty"`
+
+	// SSHAddress is the SSH connection address.
+	SSHAddress string `json:"ssh_address,omitempty"`
+
+	// CreatedAt is the creation timestamp.
+	CreatedAt string `json:"created_at,omitempty"`
+
+	// PricePerHourUSD is the price per hour.
+	PricePerHourUSD float64 `json:"price_per_hour_usd,omitempty"`
+
+	// AutoTeardownMinutes is the auto-teardown setting in minutes.
+	AutoTeardownMinutes int `json:"auto_teardown_minutes,omitempty"`
 }
 
 // ComputeInstanceInfo describes a compute instance.
@@ -184,8 +238,11 @@ type DeleteResponse struct {
 
 // SSHKeyRequest is the request body for injecting an SSH key into a running instance.
 type SSHKeyRequest struct {
+	// SSHPublicKey is the SSH public key to add.
+	SSHPublicKey string `json:"ssh_public_key,omitempty"`
+
 	// PublicKey is the SSH public key to inject (required).
-	PublicKey string `json:"public_key"`
+	PublicKey string `json:"public_key,omitempty"`
 
 	// Username is the SSH username (default "cosmic").
 	Username string `json:"username,omitempty"`

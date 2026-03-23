@@ -6,6 +6,42 @@ import (
 	"fmt"
 )
 
+// AudioResponse is a generic audio response used by multiple advanced audio endpoints.
+type AudioResponse struct {
+	// AudioBase64 is the base64-encoded audio data.
+	AudioBase64 string `json:"audio_base64,omitempty"`
+
+	// Format is the audio format (e.g. "mp3", "wav").
+	Format string `json:"format,omitempty"`
+
+	// SizeBytes is the file size in bytes.
+	SizeBytes int64 `json:"size_bytes,omitempty"`
+
+	// Model is the model used.
+	Model string `json:"model,omitempty"`
+
+	// CostTicks is the total cost in ticks.
+	CostTicks int64 `json:"cost_ticks"`
+
+	// RequestID is the unique request identifier.
+	RequestID string `json:"request_id"`
+
+	// Extra contains additional response fields.
+	Extra map[string]any `json:"extra,omitempty"`
+}
+
+// DialogueTurn is a single dialogue turn for building multi-speaker requests.
+type DialogueTurn struct {
+	// Speaker is the speaker name or identifier.
+	Speaker string `json:"speaker"`
+
+	// Text is the text for this speaker to say.
+	Text string `json:"text"`
+
+	// Voice is the voice ID to use for this speaker.
+	Voice string `json:"voice,omitempty"`
+}
+
 // DialogueRequest is the request body for multi-speaker dialogue generation.
 type DialogueRequest struct {
 	// Text is the dialogue script with speaker annotations (required).
@@ -56,11 +92,20 @@ type DialogueResponse struct {
 
 // SpeechToSpeechRequest is the request body for voice conversion.
 type SpeechToSpeechRequest struct {
+	// Model is the model for conversion.
+	Model string `json:"model,omitempty"`
+
 	// VoiceID is the target voice identifier (required).
-	VoiceID string `json:"voice_id"`
+	VoiceID string `json:"voice_id,omitempty"`
+
+	// Voice is the target voice (alternative to VoiceID).
+	Voice string `json:"voice,omitempty"`
 
 	// AudioBase64 is the base64-encoded source audio (required).
 	AudioBase64 string `json:"audio_base64"`
+
+	// OutputFormat is the output audio format.
+	OutputFormat string `json:"format,omitempty"`
 }
 
 // SpeechToSpeechResponse is the response from speech-to-speech conversion.
@@ -82,6 +127,15 @@ type SpeechToSpeechResponse struct {
 
 	// RequestID is the unique request identifier.
 	RequestID string `json:"request_id"`
+}
+
+// IsolateRequest is the request body for voice isolation.
+type IsolateRequest struct {
+	// AudioBase64 is the base64-encoded audio to isolate voice from.
+	AudioBase64 string `json:"audio_base64"`
+
+	// OutputFormat is the output audio format.
+	OutputFormat string `json:"format,omitempty"`
 }
 
 // IsolateVoiceRequest is the request body for voice isolation.
@@ -109,6 +163,21 @@ type IsolateVoiceResponse struct {
 
 	// RequestID is the unique request identifier.
 	RequestID string `json:"request_id"`
+}
+
+// RemixRequest is the request body for voice remixing.
+type RemixRequest struct {
+	// AudioBase64 is the base64-encoded source audio.
+	AudioBase64 string `json:"audio_base64"`
+
+	// Voice is the target voice for the remix.
+	Voice string `json:"voice,omitempty"`
+
+	// Model is the model for remixing.
+	Model string `json:"model,omitempty"`
+
+	// OutputFormat is the output audio format.
+	OutputFormat string `json:"format,omitempty"`
 }
 
 // RemixVoiceRequest is the request body for voice remixing.
@@ -173,11 +242,17 @@ type DubRequest struct {
 	// SourceURL is a URL to the source media (provide this or AudioBase64).
 	SourceURL string `json:"source_url,omitempty"`
 
-	// SourceLang is the source language code (auto-detected if empty).
+	// TargetLanguage is the target language (BCP-47 code, e.g. "es", "de").
+	TargetLanguage string `json:"target_language"`
+
+	// SourceLanguage is the source language (auto-detected if omitted).
+	SourceLanguage string `json:"source_language,omitempty"`
+
+	// SourceLang is the source language code (auto-detected if empty). Deprecated: use SourceLanguage.
 	SourceLang string `json:"source_lang,omitempty"`
 
-	// TargetLang is the target language code (required).
-	TargetLang string `json:"target_lang"`
+	// TargetLang is the target language code (required). Deprecated: use TargetLanguage.
+	TargetLang string `json:"target_lang,omitempty"`
 
 	// NumSpeakers is the expected number of speakers (optional).
 	NumSpeakers int `json:"num_speakers,omitempty"`
@@ -228,8 +303,23 @@ type AlignRequest struct {
 	Language string `json:"language,omitempty"`
 }
 
+// AlignmentSegment is a single alignment segment.
+type AlignmentSegment struct {
+	// Text is the aligned text.
+	Text string `json:"text"`
+
+	// Start is the start time in seconds.
+	Start float64 `json:"start"`
+
+	// End is the end time in seconds.
+	End float64 `json:"end"`
+}
+
 // AlignResponse is the response from forced alignment.
 type AlignResponse struct {
+	// Segments contains the aligned segments.
+	Segments []AlignmentSegment `json:"segments,omitempty"`
+
 	// Alignment is the list of aligned words with timestamps.
 	Alignment []AlignedWord `json:"alignment"`
 
@@ -260,11 +350,20 @@ type AlignedWord struct {
 
 // VoiceDesignRequest is the request body for generating voice previews from a description.
 type VoiceDesignRequest struct {
-	// VoiceDescription describes the desired voice characteristics (required).
-	VoiceDescription string `json:"voice_description"`
+	// Description is the text description of the desired voice.
+	Description string `json:"voice_description"`
 
-	// SampleText is the text to speak in the preview (required).
-	SampleText string `json:"sample_text"`
+	// Text is the sample text to speak with the designed voice.
+	Text string `json:"sample_text"`
+
+	// OutputFormat is the output audio format.
+	OutputFormat string `json:"format,omitempty"`
+
+	// VoiceDescription describes the desired voice characteristics (deprecated: use Description).
+	VoiceDescription string `json:"-"`
+
+	// SampleText is the text to speak in the preview (deprecated: use Text).
+	SampleText string `json:"-"`
 }
 
 // VoiceDesignResponse is the response from voice design.
@@ -296,8 +395,14 @@ type StarfishTTSRequest struct {
 	// Text is the text to speak (required).
 	Text string `json:"text"`
 
+	// Voice is the voice identifier.
+	Voice string `json:"voice,omitempty"`
+
 	// VoiceID is the HeyGen voice identifier (required).
-	VoiceID string `json:"voice_id"`
+	VoiceID string `json:"voice_id,omitempty"`
+
+	// OutputFormat is the output audio format.
+	OutputFormat string `json:"format,omitempty"`
 
 	// InputType is the input type (e.g. "text", "ssml").
 	InputType string `json:"input_type,omitempty"`
@@ -342,6 +447,57 @@ type StarfishTTSResponse struct {
 // ---------------------------------------------------------------------------
 // Advanced Music (ElevenLabs Eleven Music)
 // ---------------------------------------------------------------------------
+
+// MusicSection is a section within an Eleven Music generation request.
+type MusicSection struct {
+	SectionType  string `json:"section_type"`
+	Lyrics       string `json:"lyrics,omitempty"`
+	Style        string `json:"style,omitempty"`
+	StyleExclude string `json:"style_exclude,omitempty"`
+}
+
+// ElevenMusicRequest is the request body for advanced music generation (ElevenLabs Eleven Music).
+type ElevenMusicRequest struct {
+	Model           string         `json:"model"`
+	Prompt          string         `json:"prompt"`
+	Sections        []MusicSection `json:"sections,omitempty"`
+	DurationSeconds int            `json:"duration_seconds,omitempty"`
+	Language        string         `json:"language,omitempty"`
+	Vocals          *bool          `json:"vocals,omitempty"`
+	Style           string         `json:"style,omitempty"`
+	StyleExclude    string         `json:"style_exclude,omitempty"`
+	FinetuneID      string         `json:"finetune_id,omitempty"`
+	EditReferenceID string         `json:"edit_reference_id,omitempty"`
+	EditInstruction string         `json:"edit_instruction,omitempty"`
+}
+
+// ElevenMusicClip is a single music clip from advanced generation.
+type ElevenMusicClip struct {
+	Base64 string `json:"base64"`
+	Format string `json:"format"`
+	Size   int64  `json:"size"`
+}
+
+// ElevenMusicResponse is the response from advanced music generation.
+type ElevenMusicResponse struct {
+	Clips     []ElevenMusicClip `json:"clips"`
+	Model     string            `json:"model"`
+	CostTicks int64             `json:"cost_ticks"`
+	RequestID string            `json:"request_id"`
+}
+
+// FinetuneInfo is info about a music finetune.
+type FinetuneInfo struct {
+	FinetuneID string `json:"finetune_id"`
+	Name       string `json:"name"`
+	Status     string `json:"status"`
+	CreatedAt  string `json:"created_at,omitempty"`
+}
+
+// ListFinetunesResponse is the response from listing finetunes.
+type ListFinetunesResponse struct {
+	Finetunes []FinetuneInfo `json:"finetunes"`
+}
 
 // MusicAdvancedRequest is the request body for advanced music generation.
 type MusicAdvancedRequest struct {

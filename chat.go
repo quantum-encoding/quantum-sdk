@@ -58,6 +58,9 @@ type ContentBlock struct {
 	// Type is one of "text", "thinking", or "tool_use".
 	Type string `json:"type"`
 
+	// BlockType is an alias for Type (sdk-graph canonical name).
+	BlockType string `json:"block_type,omitempty"`
+
 	// Text holds the content for "text" and "thinking" blocks.
 	Text string `json:"text,omitempty"`
 
@@ -69,6 +72,9 @@ type ContentBlock struct {
 
 	// Input is the function arguments for "tool_use" blocks.
 	Input map[string]any `json:"input,omitempty"`
+
+	// ThoughtSignature is the Gemini thought signature — must be echoed back with tool results.
+	ThoughtSignature string `json:"thought_signature,omitempty"`
 }
 
 // ChatTool defines a function the model can call.
@@ -101,10 +107,10 @@ type ChatResponse struct {
 	StopReason string `json:"stop_reason"`
 
 	// CostTicks is the total cost from the X-QAI-Cost-Ticks header.
-	CostTicks int64 `json:"-"`
+	CostTicks int64 `json:"cost_ticks"`
 
 	// RequestID is from the X-QAI-Request-Id header.
-	RequestID string `json:"-"`
+	RequestID string `json:"request_id"`
 }
 
 // ChatUsage contains token counts and cost for a chat response.
@@ -171,20 +177,23 @@ type StreamEvent struct {
 	// Type is the event type: "content_delta", "thinking_delta", "tool_use", "usage", "heartbeat", "error", "done".
 	Type string `json:"type"`
 
+	// EventType is an alias for Type (sdk-graph canonical name).
+	EventType string `json:"event_type,omitempty"`
+
 	// Delta contains the incremental text for content_delta and thinking_delta events.
 	Delta *StreamDelta `json:"delta,omitempty"`
 
 	// ToolUse is populated for tool_use events.
-	ToolUse *StreamToolUse `json:"-"`
+	ToolUse *StreamToolUse `json:"tool_use,omitempty"`
 
 	// Usage is populated for usage events.
-	Usage *ChatUsage `json:"-"`
+	Usage *ChatUsage `json:"usage,omitempty"`
 
 	// Error is populated for error events.
-	Error string `json:"-"`
+	Error string `json:"error,omitempty"`
 
 	// Done is true when the stream is complete.
-	Done bool `json:"-"`
+	Done bool `json:"done,omitempty"`
 }
 
 // StreamDelta contains the incremental text in a streaming event.

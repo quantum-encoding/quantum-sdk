@@ -17,6 +17,9 @@ type ContactRequest struct {
 	// Email is the sender's email address (required).
 	Email string `json:"email"`
 
+	// Subject is the message subject.
+	Subject string `json:"subject,omitempty"`
+
 	// Message is the contact message (required).
 	Message string `json:"message"`
 }

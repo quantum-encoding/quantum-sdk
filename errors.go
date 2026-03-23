@@ -5,6 +5,13 @@ import (
 	"net/http"
 )
 
+// ApiError is an alias for APIError (sdk-graph canonical name).
+type ApiError = APIError
+
+// Error is an alias for APIError representing SDK errors (sdk-graph canonical name).
+// In Go, errors are returned as the built-in error interface; APIError is the concrete type.
+type Error = APIError
+
 // APIError is returned when the API responds with a non-2xx status code.
 type APIError struct {
 	// StatusCode is the HTTP status code from the response.

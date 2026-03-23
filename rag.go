@@ -2,6 +2,27 @@ package qai
 
 import "context"
 
+// RagSearchRequest is an alias for RAGSearchRequest (sdk-graph canonical name).
+type RagSearchRequest = RAGSearchRequest
+
+// RagSearchResponse is an alias for RAGSearchResponse (sdk-graph canonical name).
+type RagSearchResponse = RAGSearchResponse
+
+// RagResult is an alias for RAGResult (sdk-graph canonical name).
+type RagResult = RAGResult
+
+// RagCorpus is an alias for RAGCorpus (sdk-graph canonical name).
+type RagCorpus = RAGCorpus
+
+// SurrealRagSearchRequest is an alias for SurrealRAGSearchRequest (sdk-graph canonical name).
+type SurrealRagSearchRequest = SurrealRAGSearchRequest
+
+// SurrealRagSearchResponse is an alias for SurrealRAGSearchResponse (sdk-graph canonical name).
+type SurrealRagSearchResponse = SurrealRAGSearchResponse
+
+// SurrealRagResult is an alias for SurrealRAGResult (sdk-graph canonical name).
+type SurrealRagResult = SurrealRAGResult
+
 // RAGSearchRequest is the request body for Vertex AI RAG search.
 type RAGSearchRequest struct {
 	// Query is the search query.

@@ -6,6 +6,42 @@ import (
 	"net/url"
 )
 
+// Voice is an available voice for TTS (sdk-graph canonical name).
+type Voice struct {
+	// VoiceID is the voice identifier.
+	VoiceID string `json:"voice_id"`
+
+	// Name is the human-readable voice name.
+	Name string `json:"name"`
+
+	// Provider is the provider (e.g. "elevenlabs", "openai").
+	Provider string `json:"provider,omitempty"`
+
+	// Languages is the supported language/locale codes.
+	Languages []string `json:"languages,omitempty"`
+
+	// Gender is the voice gender.
+	Gender string `json:"gender,omitempty"`
+
+	// IsCloned indicates whether this is a cloned voice.
+	IsCloned *bool `json:"is_cloned,omitempty"`
+
+	// PreviewURL is a URL to preview the voice.
+	PreviewURL string `json:"preview_url,omitempty"`
+}
+
+// CloneVoiceFile is a file to include in a voice clone request (sdk-graph canonical name).
+type CloneVoiceFile struct {
+	// Filename is the original filename (e.g. "sample.mp3").
+	Filename string `json:"filename"`
+
+	// Data is the raw file bytes.
+	Data []byte `json:"data"`
+
+	// MimeType is the MIME type (e.g. "audio/mpeg").
+	MimeType string `json:"mime_type"`
+}
+
 // VoiceInfo describes an available voice.
 type VoiceInfo struct {
 	// VoiceID is the voice identifier used in TTS requests.
@@ -49,6 +85,12 @@ type CloneVoiceRequest struct {
 type CloneVoiceResponse struct {
 	// VoiceID is the identifier for the newly cloned voice.
 	VoiceID string `json:"voice_id"`
+
+	// Name is the name assigned to the cloned voice.
+	Name string `json:"name,omitempty"`
+
+	// Status is the cloning status message.
+	Status string `json:"status,omitempty"`
 
 	// RequestID is the unique request identifier.
 	RequestID string `json:"request_id"`

@@ -38,8 +38,14 @@ type KeyDetails struct {
 	// Name is the human-readable key name.
 	Name string `json:"name"`
 
-	// Prefix is the visible prefix of the key (e.g. "qai_...abc").
-	Prefix string `json:"prefix"`
+	// KeyPrefix is the first characters of the key for identification.
+	KeyPrefix string `json:"key_prefix,omitempty"`
+
+	// Prefix is the visible prefix of the key (deprecated: use KeyPrefix).
+	Prefix string `json:"prefix,omitempty"`
+
+	// Scope contains scope restrictions.
+	Scope any `json:"scope,omitempty"`
 
 	// Endpoints is the list of allowed endpoint prefixes.
 	Endpoints []string `json:"endpoints,omitempty"`
@@ -56,6 +62,9 @@ type KeyDetails struct {
 	// CreatedAt is the ISO 8601 creation timestamp.
 	CreatedAt string `json:"created_at,omitempty"`
 
+	// LastUsed is the last usage timestamp (RFC 3339).
+	LastUsed string `json:"last_used,omitempty"`
+
 	// Revoked indicates whether the key has been revoked.
 	Revoked bool `json:"revoked,omitempty"`
 }
@@ -64,6 +73,15 @@ type KeyDetails struct {
 type ListKeysResponse struct {
 	// Keys is the list of API keys for the authenticated user.
 	Keys []KeyDetails `json:"keys"`
+}
+
+// StatusResponse is a generic status response for operations that return a simple status.
+type StatusResponse struct {
+	// Status is the status message (e.g. "ok", "deleted", "revoked").
+	Status string `json:"status"`
+
+	// Message is an optional human-readable message.
+	Message string `json:"message,omitempty"`
 }
 
 // CreateKey creates a new scoped API key.

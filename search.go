@@ -52,6 +52,163 @@ type SearchMessage struct {
 }
 
 // ---------------------------------------------------------------------------
+// Canonical request/response types (sdk-graph parity)
+// ---------------------------------------------------------------------------
+
+// WebSearchRequest is the request body for web search (sdk-graph canonical name).
+type WebSearchRequest struct {
+	// Query is the search query string.
+	Query string `json:"query"`
+
+	// Count is the number of results to return.
+	Count int `json:"count,omitempty"`
+
+	// Offset is the pagination offset.
+	Offset int `json:"offset,omitempty"`
+
+	// Country is the country code filter (e.g. "US", "GB").
+	Country string `json:"country,omitempty"`
+
+	// Language is the language code filter (e.g. "en", "fr").
+	Language string `json:"language,omitempty"`
+
+	// Freshness is the freshness filter (e.g. "pd" for past day, "pw" for past week).
+	Freshness string `json:"freshness,omitempty"`
+
+	// Safesearch is the safe search level (e.g. "off", "moderate", "strict").
+	Safesearch string `json:"safesearch,omitempty"`
+}
+
+// SearchContextRequest is the request body for search context.
+type SearchContextRequest struct {
+	// Query is the search query string.
+	Query string `json:"query"`
+
+	// Count is the number of results to fetch context from.
+	Count int `json:"count,omitempty"`
+
+	// Country is the country code filter.
+	Country string `json:"country,omitempty"`
+
+	// Language is the language code filter.
+	Language string `json:"language,omitempty"`
+
+	// Freshness is the freshness filter.
+	Freshness string `json:"freshness,omitempty"`
+}
+
+// SearchContextChunk is a content chunk from search context.
+type SearchContextChunk struct {
+	// Content is the extracted page content.
+	Content string `json:"content"`
+
+	// URL is the source URL.
+	URL string `json:"url"`
+
+	// Title is the page title.
+	Title string `json:"title"`
+
+	// Score is the relevance score.
+	Score float64 `json:"score,omitempty"`
+
+	// ContentType is the content type (e.g. "text/html").
+	ContentType string `json:"content_type,omitempty"`
+}
+
+// SearchContextSource is a source reference from search context.
+type SearchContextSource struct {
+	// URL is the source URL.
+	URL string `json:"url"`
+
+	// Title is the source title.
+	Title string `json:"title"`
+}
+
+// SearchContextResponse is the response from the search context endpoint.
+type SearchContextResponse struct {
+	// Chunks contains content chunks extracted from search results.
+	Chunks []SearchContextChunk `json:"chunks"`
+
+	// Sources contains source references.
+	Sources []SearchContextSource `json:"sources,omitempty"`
+
+	// Query is the original query.
+	Query string `json:"query"`
+}
+
+// SearchAnswerMessage is a chat message for the search answer endpoint.
+type SearchAnswerMessage struct {
+	// Role is the message role ("user", "assistant", "system").
+	Role string `json:"role"`
+
+	// Content is the message text content.
+	Content string `json:"content"`
+}
+
+// SearchAnswerRequest is the request body for search answer.
+type SearchAnswerRequest struct {
+	// Messages is the conversation messages.
+	Messages []SearchAnswerMessage `json:"messages"`
+
+	// Model is the model to use for answer generation.
+	Model string `json:"model,omitempty"`
+}
+
+// SearchAnswerCitation is a citation reference in a search answer.
+type SearchAnswerCitation struct {
+	// URL is the source URL.
+	URL string `json:"url"`
+
+	// Title is the source title.
+	Title string `json:"title"`
+
+	// Snippet is the snippet from the source.
+	Snippet string `json:"snippet,omitempty"`
+}
+
+// InfoboxResult is an infobox (knowledge panel) result.
+type InfoboxResult struct {
+	// Title is the infobox title.
+	Title string `json:"title"`
+
+	// Description is the long description.
+	Description string `json:"description"`
+
+	// URL is the source URL.
+	URL string `json:"url,omitempty"`
+}
+
+// DiscussionResult is a discussion / forum result.
+type DiscussionResult struct {
+	// Title is the discussion title.
+	Title string `json:"title"`
+
+	// URL is the discussion URL.
+	URL string `json:"url"`
+
+	// Description is the short description.
+	Description string `json:"description"`
+
+	// Age is the age of the discussion.
+	Age string `json:"age,omitempty"`
+
+	// Forum is the forum name.
+	Forum string `json:"forum,omitempty"`
+}
+
+// ResponseMeta contains response metadata from API calls.
+type ResponseMeta struct {
+	// CostTicks is the total cost in ticks.
+	CostTicks int64 `json:"cost_ticks"`
+
+	// RequestID is the unique request identifier.
+	RequestID string `json:"request_id"`
+
+	// Model is the model that was used.
+	Model string `json:"model,omitempty"`
+}
+
+// ---------------------------------------------------------------------------
 // Internal request bodies
 // ---------------------------------------------------------------------------
 
@@ -115,6 +272,7 @@ type WebResult struct {
 	URL         string `json:"url"`
 	Description string `json:"description"`
 	Age         string `json:"age,omitempty"`
+	Favicon     string `json:"favicon,omitempty"`
 	Thumbnail   string `json:"thumbnail,omitempty"`
 }
 
