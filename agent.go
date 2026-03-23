@@ -92,6 +92,18 @@ type MissionRequest struct {
 	// SessionID for conversation context (optional).
 	SessionID string `json:"session_id,omitempty"`
 
+	// DeploymentID routes workers through a deployed Vertex endpoint (optional).
+	DeploymentID string `json:"deployment_id,omitempty"`
+
+	// WorkerModel is the model for codegen worker nodes (optional).
+	WorkerModel string `json:"worker_model,omitempty"`
+
+	// BuildCommand is the build command for codegen verification (optional).
+	BuildCommand string `json:"build_command,omitempty"`
+
+	// WorkspacePath is the workspace directory for generated files (optional).
+	WorkspacePath string `json:"workspace_path,omitempty"`
+
 	// AutoPlan controls whether the conductor generates a plan before executing. Default: true.
 	AutoPlan *bool `json:"auto_plan,omitempty"`
 
