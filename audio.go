@@ -14,6 +14,18 @@ type SttRequest = STTRequest
 // SttResponse is the response from speech-to-text (sdk-graph canonical name).
 type SttResponse = STTResponse
 
+// TextToSpeechRequest is a canonical alias for TTSRequest (cross-SDK parity).
+type TextToSpeechRequest = TTSRequest
+
+// TextToSpeechResponse is a canonical alias for TTSResponse (cross-SDK parity).
+type TextToSpeechResponse = TTSResponse
+
+// SpeechToTextRequest is a canonical alias for STTRequest (cross-SDK parity).
+type SpeechToTextRequest = STTRequest
+
+// SpeechToTextResponse is a canonical alias for STTResponse (cross-SDK parity).
+type SpeechToTextResponse = STTResponse
+
 // TTSRequest is the request body for text-to-speech.
 type TTSRequest struct {
 	// Model is the TTS model (e.g. "tts-1", "eleven_multilingual_v2", "grok-3-tts").
