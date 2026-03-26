@@ -9,6 +9,12 @@ import (
 	"net/http"
 )
 
+// ContactResponse is the response from the contact form endpoint.
+type ContactResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message,omitempty"`
+}
+
 // ContactRequest is the request body for the contact form.
 type ContactRequest struct {
 	// Name is the sender's name (required).

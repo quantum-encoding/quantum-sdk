@@ -347,6 +347,23 @@ type ModelUrls struct {
 	Blend string `json:"blend"`
 }
 
+// BasicAnimations contains default walk/run animations from rigging.
+type BasicAnimations struct {
+	WalkingGLB         string `json:"walking_glb_url"`
+	WalkingFBX         string `json:"walking_fbx_url"`
+	WalkingArmatureGLB string `json:"walking_armature_glb_url"`
+	RunningGLB         string `json:"running_glb_url"`
+	RunningFBX         string `json:"running_fbx_url"`
+	RunningArmatureGLB string `json:"running_armature_glb_url"`
+}
+
+// Generate3DRequest is the request body for 3D model generation.
+type Generate3DRequest struct {
+	Model    string `json:"model"`
+	Prompt   string `json:"prompt,omitempty"`
+	ImageURL string `json:"image_url,omitempty"`
+}
+
 // AnimationPostProcess describes post-processing options for animation export.
 type AnimationPostProcess struct {
 	// OperationType is the operation: "change_fps", "fbx2usdz", "extract_armature".

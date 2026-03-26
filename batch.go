@@ -24,6 +24,14 @@ type BatchJob struct {
 	MaxTokens int `json:"max_tokens,omitempty"`
 }
 
+// BatchJobInput is a canonical alias for BatchJob (cross-SDK parity).
+type BatchJobInput = BatchJob
+
+// BatchSubmitRequest is the request body for submitting a batch of jobs.
+type BatchSubmitRequest struct {
+	Jobs []BatchJob `json:"jobs"`
+}
+
 // BatchSubmitResponse is the response from batch submission.
 type BatchSubmitResponse struct {
 	// JobIDs is the list of created job IDs.

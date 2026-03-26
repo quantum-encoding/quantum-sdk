@@ -12,6 +12,15 @@ import (
 	"nhooyr.io/websocket"
 )
 
+// RealtimeSessionResponse is the response from creating a realtime voice session.
+type RealtimeSessionResponse struct {
+	EphemeralToken string `json:"ephemeral_token,omitempty"`
+	URL            string `json:"url,omitempty"`
+	SignedURL      string `json:"signed_url,omitempty"`
+	SessionID      string `json:"session_id,omitempty"`
+	Provider       string `json:"provider,omitempty"`
+}
+
 // RealtimeConfig configures a realtime voice session.
 type RealtimeConfig struct {
 	// Voice to use (e.g. "Sal", "Eve", "Vesper"). Default: "Sal".
