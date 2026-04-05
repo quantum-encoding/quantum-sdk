@@ -19,6 +19,9 @@ type ChatRequest struct {
 	// Tools defines functions the model can call.
 	Tools []ChatTool `json:"tools,omitempty"`
 
+	// ToolChoice constrains tool use: "auto" (default), "any" (force tool use), "none", or a specific tool name.
+	ToolChoice string `json:"tool_choice,omitempty"`
+
 	// Stream enables server-sent event streaming. Use ChatStream instead of Chat for streaming.
 	Stream bool `json:"stream,omitempty"`
 
@@ -27,6 +30,10 @@ type ChatRequest struct {
 
 	// MaxTokens limits the response length.
 	MaxTokens *int `json:"max_tokens,omitempty"`
+
+	// OutputSchema constrains the response to valid JSON matching this JSON Schema.
+	// Supported by Anthropic, OpenAI, xAI, Gemini, and Vertex AI.
+	OutputSchema map[string]any `json:"output_schema,omitempty"`
 
 	// ProviderOptions passes provider-specific settings (e.g. Anthropic thinking, xAI search).
 	//
@@ -53,9 +60,10 @@ type ChatMessage struct {
 	IsError bool `json:"is_error,omitempty"`
 }
 
-// ContentBlock is a single block in the response content array.
+// ContentBlock is a single block in the response/request content array.
+// Supports text, thinking, tool_use, image, and file types.
 type ContentBlock struct {
-	// Type is one of "text", "thinking", or "tool_use".
+	// Type is one of "text", "thinking", "tool_use", "image", or "file".
 	Type string `json:"type"`
 
 	// BlockType is an alias for Type (sdk-graph canonical name).
@@ -74,7 +82,16 @@ type ContentBlock struct {
 	Input map[string]any `json:"input,omitempty"`
 
 	// ThoughtSignature is the Gemini thought signature — must be echoed back with tool results.
-	ThoughtSignature string `json:"thought_signature,omitempty"`
+	ThoughtSignature []byte `json:"thought_signature,omitempty"`
+
+	// Data is base64-encoded content for "image" and "file" blocks.
+	Data string `json:"data,omitempty"`
+
+	// MimeType is the MIME type for "image" and "file" blocks (e.g. "image/png", "application/pdf").
+	MimeType string `json:"mime_type,omitempty"`
+
+	// FileName is the original filename for "file" blocks.
+	FileName string `json:"file_name,omitempty"`
 }
 
 // ChatTool defines a function the model can call.
@@ -87,6 +104,9 @@ type ChatTool struct {
 
 	// Parameters is the JSON Schema for the function's arguments.
 	Parameters map[string]any `json:"parameters,omitempty"`
+
+	// Strict enables guaranteed schema validation on tool inputs (Anthropic, OpenAI).
+	Strict bool `json:"strict,omitempty"`
 }
 
 // ChatResponse is the response from a non-streaming chat request.
@@ -105,6 +125,9 @@ type ChatResponse struct {
 
 	// StopReason indicates why generation stopped ("end_turn", "tool_use", "max_tokens").
 	StopReason string `json:"stop_reason"`
+
+	// Citations from web search results (xAI native search, Brave search, etc.).
+	Citations []Citation `json:"citations,omitempty"`
 
 	// CostTicks is the total cost from the X-QAI-Cost-Ticks header.
 	CostTicks int64 `json:"cost_ticks"`

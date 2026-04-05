@@ -29,6 +29,15 @@ type SessionChatRequest struct {
 	// SystemPrompt is the system prompt (used when creating a new session).
 	SystemPrompt string `json:"system_prompt,omitempty"`
 
+	// Temperature controls randomness (0.0–2.0).
+	Temperature *float64 `json:"temperature,omitempty"`
+
+	// MaxTokens limits the response length.
+	MaxTokens *int `json:"max_tokens,omitempty"`
+
+	// ToolChoice constrains tool use: "auto", "any", "none", or a tool name.
+	ToolChoice string `json:"tool_choice,omitempty"`
+
 	// ContextConfig controls context management for the session.
 	ContextConfig *ContextConfig `json:"context_config,omitempty"`
 
