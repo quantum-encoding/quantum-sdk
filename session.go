@@ -41,6 +41,11 @@ type SessionChatRequest struct {
 	// ContextConfig controls context management for the session.
 	ContextConfig *ContextConfig `json:"context_config,omitempty"`
 
+	// ReasoningEffort controls reasoning depth: "none", "low", "medium",
+	// "high", "xhigh". Empty = provider default. Mirrors
+	// ChatRequest.ReasoningEffort.
+	ReasoningEffort string `json:"reasoning_effort,omitempty"`
+
 	// ProviderOptions passes provider-specific settings.
 	ProviderOptions map[string]json.RawMessage `json:"provider_options,omitempty"`
 }

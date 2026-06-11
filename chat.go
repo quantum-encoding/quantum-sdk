@@ -35,6 +35,19 @@ type ChatRequest struct {
 	// Supported by Anthropic, OpenAI, xAI, Gemini, and Vertex AI.
 	OutputSchema map[string]any `json:"output_schema,omitempty"`
 
+	// ReasoningEffort controls how much chain-of-thought a reasoning model
+	// runs before answering. One of "none", "low", "medium", "high",
+	// "xhigh". Empty = provider default (medium on GPT-5.5+). An unknown
+	// value is rejected with 400 by the gateway.
+	ReasoningEffort string `json:"reasoning_effort,omitempty"`
+
+	// CachedContent is the Vertex resource name of a previously created
+	// context cache (e.g. "cachedContents/abc123"). When set, the cached
+	// content is billed at the cached-read rate and need not be re-sent.
+	// Gemini-only; ignored by other providers, and the cache's model must
+	// match this request's model.
+	CachedContent string `json:"cached_content,omitempty"`
+
 	// ProviderOptions passes provider-specific settings (e.g. Anthropic thinking, xAI search).
 	//
 	// Example: map[string]any{"anthropic": map[string]any{"thinking": map[string]any{"budget_tokens": 10000}}}
@@ -58,6 +71,12 @@ type ChatMessage struct {
 
 	// IsError indicates whether a tool result is an error.
 	IsError bool `json:"is_error,omitempty"`
+
+	// Phase echoes back provider-side reasoning state (OpenAI Responses
+	// API). Pass back the Phase received on the previous turn's
+	// ChatResponse so reasoning state is preserved across replay. Empty for
+	// providers that don't surface phase.
+	Phase string `json:"phase,omitempty"`
 }
 
 // ContentBlock is a single block in the response/request content array.
@@ -92,6 +111,11 @@ type ContentBlock struct {
 
 	// FileName is the original filename for "file" blocks.
 	FileName string `json:"file_name,omitempty"`
+
+	// FileURI is the remote resource URL for "file_uri" blocks (YouTube,
+	// gs://, etc.) — the model fetches it directly instead of receiving
+	// inline data.
+	FileURI string `json:"file_uri,omitempty"`
 }
 
 // ChatTool defines a function the model can call.
@@ -151,6 +175,12 @@ type ChatResponse struct {
 	// Citations from web search results (xAI native search, Brave search, etc.).
 	Citations []Citation `json:"citations,omitempty"`
 
+	// Phase is the provider-side reasoning-state tag (OpenAI Responses API).
+	// Echo it back on the corresponding assistant ChatMessage of the next
+	// turn (ChatMessage.Phase) to preserve reasoning state across replay.
+	// Empty when the provider doesn't surface phase.
+	Phase string `json:"phase,omitempty"`
+
 	// CostTicks is the total cost from the X-QAI-Cost-Ticks header.
 	CostTicks int64 `json:"cost_ticks"`
 
@@ -160,9 +190,21 @@ type ChatResponse struct {
 
 // ChatUsage contains token counts and cost for a chat response.
 type ChatUsage struct {
-	InputTokens  int   `json:"input_tokens"`
-	OutputTokens int   `json:"output_tokens"`
-	CostTicks    int64 `json:"cost_ticks"`
+	InputTokens int `json:"input_tokens"`
+
+	// CachedTokens is the portion of InputTokens served from a prompt cache
+	// (billed at the cheaper cached-read rate). Present on providers that
+	// report cache hits (Anthropic, Gemini, etc.).
+	CachedTokens int `json:"cached_tokens,omitempty"`
+
+	OutputTokens int `json:"output_tokens"`
+
+	// ReasoningTokens is the chain-of-thought tokens billed on top of
+	// OutputTokens for reasoning models (Gemini/Vertex report these
+	// separately). Zero when the provider folds them into OutputTokens.
+	ReasoningTokens int `json:"reasoning_tokens,omitempty"`
+
+	CostTicks int64 `json:"cost_ticks"`
 }
 
 // Text returns the concatenated text content from the response, ignoring thinking and tool_use blocks.
