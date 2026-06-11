@@ -21,6 +21,10 @@ type MissionCreateRequest struct {
 	// Conductor model (default: claude-sonnet-4-6).
 	ConductorModel string `json:"conductor_model,omitempty"`
 
+	// Conductor tier override. Default: "expensive".
+	// Set to "cheap" when using a fast router as conductor.
+	ConductorTier string `json:"conductor_tier,omitempty"`
+
 	// Worker team configuration.
 	Workers map[string]MissionWorkerConfig `json:"workers,omitempty"`
 

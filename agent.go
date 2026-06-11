@@ -91,6 +91,10 @@ type MissionRequest struct {
 	// ConductorModel plans and reviews. Default: claude-sonnet-4-6.
 	ConductorModel string `json:"conductor_model,omitempty"`
 
+	// ConductorTier overrides the conductor's cost tier. Default: "expensive".
+	// Set to "cheap" when using a fast router (e.g. Grok 4.1) as conductor.
+	ConductorTier string `json:"conductor_tier,omitempty"`
+
 	// Workers defines the agent team. Keys are worker names, values are configs.
 	// If empty, uses cost-optimized defaults.
 	Workers map[string]MissionWorkerConfig `json:"workers,omitempty"`
@@ -133,6 +137,13 @@ type MissionWorker struct {
 
 	// Description explains what this worker is good at.
 	Description string `json:"description,omitempty"`
+
+	// EscalateTo names a worker to fall back to when this worker fails.
+	// E.g. a cheap coder escalates to an expensive coder after MaxRetries failures.
+	EscalateTo string `json:"escalate_to,omitempty"`
+
+	// MaxRetries before escalating (default 1 = escalate on first failure).
+	MaxRetries int `json:"max_retries,omitempty"`
 }
 
 // MissionWorkerConfig is an alias for MissionWorker for backwards compatibility.
