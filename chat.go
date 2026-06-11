@@ -109,6 +109,22 @@ type ChatTool struct {
 	Strict bool `json:"strict,omitempty"`
 }
 
+// Canonical stop_reason values emitted by the gateway. Every provider's
+// native finish reason is normalized into this Anthropic-flavored space
+// before it reaches you, so comparing ChatResponse.StopReason against these
+// constants works regardless of which model served the request. The gateway
+// may still pass through a provider-specific reason it cannot map
+// (lowercased); treat any value outside this set as terminal.
+const (
+	StopReasonEndTurn       = "end_turn"       // natural completion
+	StopReasonToolUse       = "tool_use"       // model is requesting tool execution
+	StopReasonMaxTokens     = "max_tokens"     // output token cap reached — response truncated
+	StopReasonStopSequence  = "stop_sequence"  // a requested stop sequence matched
+	StopReasonContentFilter = "content_filter" // provider-side safety/policy stop
+	StopReasonRefusal       = "refusal"        // safety classifier declined; discard partial output
+	StopReasonError         = "error"          // provider reported a terminal failure
+)
+
 // ChatResponse is the response from a non-streaming chat request.
 type ChatResponse struct {
 	// ID is the unique request identifier.
@@ -123,7 +139,13 @@ type ChatResponse struct {
 	// Usage contains token counts and cost.
 	Usage *ChatUsage `json:"usage,omitempty"`
 
-	// StopReason indicates why generation stopped ("end_turn", "tool_use", "max_tokens").
+	// StopReason indicates why generation stopped. As of the gateway's
+	// provider-normalization change it is a canonical value (one of the
+	// StopReason* constants) regardless of which provider served the
+	// request: end_turn, tool_use, max_tokens, stop_sequence,
+	// content_filter, refusal, or error. A provider-specific reason with no
+	// canonical mapping passes through lowercased — match the constants and
+	// treat anything else as terminal.
 	StopReason string `json:"stop_reason"`
 
 	// Citations from web search results (xAI native search, Brave search, etc.).
@@ -175,6 +197,23 @@ func (r *ChatResponse) ToolCalls() []ContentBlock {
 	}
 	return calls
 }
+
+// IsToolUse reports whether the model is requesting tool execution
+// (StopReason == StopReasonToolUse). The gateway guarantees this whenever
+// tool_use blocks are present, across every provider.
+func (r *ChatResponse) IsToolUse() bool { return r.StopReason == StopReasonToolUse }
+
+// IsRefusal reports whether a safety classifier declined the request
+// (StopReason == StopReasonRefusal). On a refusal the content may be empty
+// or a partial, already-streamed prefix that should be discarded — check
+// this before reading Text(). (Newer Anthropic models such as Claude
+// Fable 5 can refuse with an HTTP 200.)
+func (r *ChatResponse) IsRefusal() bool { return r.StopReason == StopReasonRefusal }
+
+// IsMaxTokens reports whether output was cut off by the token cap
+// (StopReason == StopReasonMaxTokens) — the response is incomplete; raise
+// MaxTokens or continue the turn.
+func (r *ChatResponse) IsMaxTokens() bool { return r.StopReason == StopReasonMaxTokens }
 
 // Chat sends a non-streaming text generation request.
 func (c *Client) Chat(ctx context.Context, req *ChatRequest) (*ChatResponse, error) {

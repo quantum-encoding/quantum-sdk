@@ -47,7 +47,7 @@ func main() {
 client := qai.NewClient("qai_k_your_key_here")
 
 resp, err := client.ChatRequest(ctx, &qai.ChatRequest{
-    Model: "claude-sonnet-4-6",
+    Model: "claude-opus-4-8",
     Messages: []qai.ChatMessage{
         qai.SystemMessage("You are a helpful assistant."),
         qai.UserMessage("Explain goroutines in Go"),
@@ -65,7 +65,7 @@ fmt.Println(resp.Text())
 
 ```go
 err := client.ChatStream(ctx, &qai.ChatRequest{
-    Model:    "claude-sonnet-4-6",
+    Model:    "claude-opus-4-8",
     Messages: []qai.ChatMessage{qai.UserMessage("Write a haiku about Go")},
 }, func(event *qai.StreamEvent) {
     if event.DeltaText() != "" {

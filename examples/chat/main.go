@@ -28,7 +28,7 @@ func main() {
 	fmt.Println("=== Non-streaming Chat ===")
 
 	resp, err := client.Chat(ctx, &qai.ChatRequest{
-		Model: "claude-sonnet-4-6",
+		Model: "claude-opus-4-8",
 		Messages: []qai.ChatMessage{
 			{Role: "user", Content: "What is quantum computing in one sentence?"},
 		},
@@ -38,6 +38,12 @@ func main() {
 	}
 
 	fmt.Printf("Model: %s\n", resp.Model)
+	// StopReason is canonical across every provider — match it directly.
+	if resp.IsRefusal() {
+		fmt.Println("Request was declined (stop_reason = refusal); no answer to show.")
+		return
+	}
+	fmt.Printf("Stop reason: %s\n", resp.StopReason)
 	fmt.Printf("Response: %s\n", resp.Text())
 	if resp.Usage != nil {
 		fmt.Printf("Tokens: %d in / %d out (cost: %d ticks)\n",
@@ -49,7 +55,7 @@ func main() {
 	fmt.Println("=== Streaming Chat ===")
 
 	events, err := client.ChatStream(ctx, &qai.ChatRequest{
-		Model: "claude-sonnet-4-6",
+		Model: "claude-opus-4-8",
 		Messages: []qai.ChatMessage{
 			{Role: "user", Content: "Count from 1 to 5, one number per line."},
 		},
