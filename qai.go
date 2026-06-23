@@ -39,8 +39,13 @@ func New(apiKey string, opts ...Option) *Client {
 	c := &Client{
 		apiKey:  apiKey,
 		baseURL: DefaultBaseURL,
+		// 60s used to abort long buffered media generation (image/video return a
+		// single JSON blob only when the provider finishes — no bytes flow during
+		// generation). 600s clears the backend's 5-minute media deadline, so the
+		// server returns a proper error before the client gives up. Override with
+		// WithTimeout. Streaming uses a separate no-timeout client.
 		http: &http.Client{
-			Timeout: 60 * time.Second,
+			Timeout: 600 * time.Second,
 		},
 	}
 	for _, opt := range opts {
