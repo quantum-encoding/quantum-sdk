@@ -3,6 +3,8 @@ package qai
 import (
 	"bytes"
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -56,9 +58,34 @@ func New(apiKey string, opts ...Option) *Client {
 
 // responseMeta holds common response metadata parsed from HTTP headers.
 type responseMeta struct {
-	CostTicks int64
-	RequestID string
-	Model     string
+	CostTicks    int64
+	RequestID    string
+	Model        string
+	BalanceAfter int64 // X-QAI-Balance-After: wallet balance after this call (signed — claw-back can make it negative)
+}
+
+// idempotentRequest is implemented by billing-bearing request structs that
+// carry a caller-overridable Idempotency-Key. When the caller hasn't set one,
+// doJSON/doStreamRaw auto-generates a random key so a network retry of the
+// same in-flight request is deduped server-side instead of double-charging.
+//
+// The field is `json:"-"` so it never appears in the request body; it only
+// surfaces as the Idempotency-Key HTTP header.
+type idempotentRequest interface {
+	idempotencyKey() string
+}
+
+// newIdempotencyKey returns a fresh 128-bit hex idempotency key. Uses
+// crypto/rand so the keys are unguessable (an attacker who could predict
+// them could pre-seat keys and block legitimate retries).
+func newIdempotencyKey() string {
+	var b [16]byte
+	if _, err := rand.Read(b[:]); err != nil {
+		// crypto/rand should never fail on a sane host; fall back to a
+		// time-derived key so the header is still set rather than dropped.
+		return fmt.Sprintf("qai_%x", time.Now().UnixNano())
+	}
+	return "qai_" + hex.EncodeToString(b[:])
 }
 
 // doJSON sends a JSON request and decodes the JSON response into dst.
@@ -83,6 +110,15 @@ func (c *Client) doJSON(ctx context.Context, method, path string, body any, dst 
 		req.Header.Set("Content-Type", "application/json")
 	}
 
+	// Auto-attach an Idempotency-Key on billing-bearing POSTs so a retry
+	// of the same in-flight request is deduped server-side. Callers can
+	// override by setting IdempotencyKey on the request struct.
+	if method == http.MethodPost {
+		if ik, ok := body.(idempotentRequest); ok {
+			req.Header.Set("Idempotency-Key", ik.idempotencyKey())
+		}
+	}
+
 	resp, err := c.http.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("qai: %s %s: %w", method, path, err)
@@ -95,6 +131,12 @@ func (c *Client) doJSON(ctx context.Context, method, path string, body any, dst 
 	}
 	if v := resp.Header.Get("X-QAI-Cost-Ticks"); v != "" {
 		meta.CostTicks, _ = strconv.ParseInt(v, 10, 64)
+	}
+	// X-QAI-Balance-After is the wallet balance after this call. It is
+	// signed: a claw-back (refund reversal) can push it negative. Absent
+	// on routes that don't touch the wallet (models list, etc.) — leave 0.
+	if v := resp.Header.Get("X-QAI-Balance-After"); v != "" {
+		meta.BalanceAfter, _ = strconv.ParseInt(v, 10, 64)
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
@@ -128,6 +170,12 @@ func (c *Client) doStreamRaw(ctx context.Context, path string, body any) (*http.
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "text/event-stream")
 
+	// Billing-bearing streaming routes (chat) get an auto-generated
+	// Idempotency-Key too — a stream is still a chargeable generation.
+	if ik, ok := body.(idempotentRequest); ok {
+		req.Header.Set("Idempotency-Key", ik.idempotencyKey())
+	}
+
 	// Use a client without timeout for streaming — context controls cancellation.
 	streamClient := &http.Client{}
 	resp, err := streamClient.Do(req)
@@ -138,6 +186,9 @@ func (c *Client) doStreamRaw(ctx context.Context, path string, body any) (*http.
 	meta := &responseMeta{
 		RequestID: resp.Header.Get("X-QAI-Request-Id"),
 		Model:     resp.Header.Get("X-QAI-Model"),
+	}
+	if v := resp.Header.Get("X-QAI-Balance-After"); v != "" {
+		meta.BalanceAfter, _ = strconv.ParseInt(v, 10, 64)
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {

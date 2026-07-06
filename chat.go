@@ -37,8 +37,9 @@ type ChatRequest struct {
 
 	// ReasoningEffort controls how much chain-of-thought a reasoning model
 	// runs before answering. One of "none", "low", "medium", "high",
-	// "xhigh". Empty = provider default (medium on GPT-5.5+). An unknown
-	// value is rejected with 400 by the gateway.
+	// "xhigh", "max". Empty = provider default (medium on GPT-5.5+).
+	// "max" is Anthropic Opus 4.7+ only — OpenAI rejects it with 400.
+	// An unknown value is rejected with 400 by the gateway.
 	ReasoningEffort string `json:"reasoning_effort,omitempty"`
 
 	// CachedContent is the Vertex resource name of a previously created
@@ -52,6 +53,23 @@ type ChatRequest struct {
 	//
 	// Example: map[string]any{"anthropic": map[string]any{"thinking": map[string]any{"budget_tokens": 10000}}}
 	ProviderOptions map[string]any `json:"provider_options,omitempty"`
+
+	// IdempotencyKey is sent as the Idempotency-Key header so a retry of the
+	// same in-flight request is deduped server-side instead of double-charging.
+	// When empty, the client auto-generates a random key. Set explicitly to
+	// reuse a previous call's key (e.g. after a network blip). Never sent in
+	// the JSON body — it only rides on the header.
+	IdempotencyKey string `json:"-"`
+}
+
+// idempotencyKey returns the caller-set key, auto-generating one if empty.
+// The generated key is stored back on the struct so retries of the same
+// ChatRequest reuse it (the contract that lets the server dedupe).
+func (r *ChatRequest) idempotencyKey() string {
+	if r.IdempotencyKey == "" {
+		r.IdempotencyKey = newIdempotencyKey()
+	}
+	return r.IdempotencyKey
 }
 
 // ChatMessage is a single message in a conversation.
@@ -175,6 +193,13 @@ type ChatResponse struct {
 	// Citations from web search results (xAI native search, Brave search, etc.).
 	Citations []Citation `json:"citations,omitempty"`
 
+	// Cached is true when this response was served from the gateway's
+	// semantic cache (a cache hit means no upstream provider call and no
+	// charge). The X-Semantic-Cache header carries the same signal at the
+	// transport layer; this is the body-level mirror the server sets on
+	// cache hits (convert.go). False/absent = fresh provider response.
+	Cached bool `json:"cached,omitempty"`
+
 	// Phase is the provider-side reasoning-state tag (OpenAI Responses API).
 	// Echo it back on the corresponding assistant ChatMessage of the next
 	// turn (ChatMessage.Phase) to preserve reasoning state across replay.
@@ -183,6 +208,11 @@ type ChatResponse struct {
 
 	// CostTicks is the total cost from the X-QAI-Cost-Ticks header.
 	CostTicks int64 `json:"cost_ticks"`
+
+	// BalanceAfter is the wallet balance after this call, from the
+	// X-QAI-Balance-After header. Signed — a claw-back (refund reversal)
+	// can make it negative. Zero when the route doesn't surface it.
+	BalanceAfter int64 `json:"-"`
 
 	// RequestID is from the X-QAI-Request-Id header.
 	RequestID string `json:"request_id"`
@@ -269,6 +299,7 @@ func (c *Client) Chat(ctx context.Context, req *ChatRequest) (*ChatResponse, err
 
 	resp.CostTicks = meta.CostTicks
 	resp.RequestID = meta.RequestID
+	resp.BalanceAfter = meta.BalanceAfter
 	if resp.Model == "" {
 		resp.Model = meta.Model
 	}
@@ -314,15 +345,16 @@ type StreamToolUse struct {
 
 // rawStreamEvent is the raw JSON from the SSE stream before parsing into typed fields.
 type rawStreamEvent struct {
-	Type         string         `json:"type"`
-	Delta        *StreamDelta   `json:"delta,omitempty"`
-	ID           string         `json:"id,omitempty"`
-	Name         string         `json:"name,omitempty"`
-	Input        map[string]any `json:"input,omitempty"`
-	InputTokens  int            `json:"input_tokens,omitempty"`
-	OutputTokens int            `json:"output_tokens,omitempty"`
-	CostTicks    int64          `json:"cost_ticks,omitempty"`
-	Message      string         `json:"message,omitempty"`
+	Type            string         `json:"type"`
+	Delta           *StreamDelta   `json:"delta,omitempty"`
+	ID              string         `json:"id,omitempty"`
+	Name            string         `json:"name,omitempty"`
+	Input           map[string]any `json:"input,omitempty"`
+	InputTokens     int            `json:"input_tokens,omitempty"`
+	OutputTokens    int            `json:"output_tokens,omitempty"`
+	ReasoningTokens int            `json:"reasoning_tokens,omitempty"`
+	CostTicks       int64          `json:"cost_ticks,omitempty"`
+	Message         string         `json:"message,omitempty"`
 }
 
 // ChatStream sends a streaming text generation request and returns a channel of events.
@@ -402,9 +434,10 @@ func (c *Client) ChatStream(ctx context.Context, req *ChatRequest) (<-chan Strea
 				}
 			case "usage":
 				ev.Usage = &ChatUsage{
-					InputTokens:  raw.InputTokens,
-					OutputTokens: raw.OutputTokens,
-					CostTicks:    raw.CostTicks,
+					InputTokens:     raw.InputTokens,
+					OutputTokens:    raw.OutputTokens,
+					ReasoningTokens: raw.ReasoningTokens,
+					CostTicks:       raw.CostTicks,
 				}
 			case "error":
 				ev.Error = raw.Message

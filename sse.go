@@ -60,9 +60,10 @@ func readSSEStream(ctx context.Context, resp *http.Response) <-chan StreamEvent 
 				}
 			case "usage":
 				ev.Usage = &ChatUsage{
-					InputTokens:  raw.InputTokens,
-					OutputTokens: raw.OutputTokens,
-					CostTicks:    raw.CostTicks,
+					InputTokens:     raw.InputTokens,
+					OutputTokens:    raw.OutputTokens,
+					ReasoningTokens: raw.ReasoningTokens,
+					CostTicks:       raw.CostTicks,
 				}
 			case "error":
 				ev.Error = raw.Message

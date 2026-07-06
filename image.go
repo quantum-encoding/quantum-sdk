@@ -48,6 +48,19 @@ type ImageRequest struct {
 
 	// EnablePBR generates PBR texture maps (base_color, metallic, roughness, normal).
 	EnablePBR *bool `json:"enable_pbr,omitempty"`
+
+	// IdempotencyKey is sent as the Idempotency-Key header so a retry of the
+	// same in-flight generation is deduped server-side instead of double-charging.
+	// When empty, the client auto-generates a random key. Never sent in the body.
+	IdempotencyKey string `json:"-"`
+}
+
+// idempotencyKey returns the caller-set key, auto-generating one if empty.
+func (r *ImageRequest) idempotencyKey() string {
+	if r.IdempotencyKey == "" {
+		r.IdempotencyKey = newIdempotencyKey()
+	}
+	return r.IdempotencyKey
 }
 
 // ImageResponse is the response from image generation.
@@ -60,6 +73,10 @@ type ImageResponse struct {
 
 	// CostTicks is the total cost in ticks.
 	CostTicks int64 `json:"cost_ticks"`
+
+	// BalanceAfter is the wallet balance after this call, from the
+	// X-QAI-Balance-After header. Signed — a claw-back can make it negative.
+	BalanceAfter int64 `json:"-"`
 
 	// RequestID is the unique request identifier.
 	RequestID string `json:"request_id"`
@@ -93,6 +110,17 @@ type ImageEditRequest struct {
 
 	// Size specifies the output dimensions.
 	Size string `json:"size,omitempty"`
+
+	// IdempotencyKey is sent as the Idempotency-Key header; auto-generated if empty.
+	IdempotencyKey string `json:"-"`
+}
+
+// idempotencyKey returns the caller-set key, auto-generating one if empty.
+func (r *ImageEditRequest) idempotencyKey() string {
+	if r.IdempotencyKey == "" {
+		r.IdempotencyKey = newIdempotencyKey()
+	}
+	return r.IdempotencyKey
 }
 
 // ImageEditResponse is the response from image editing (same shape as generation).
@@ -111,6 +139,7 @@ func (c *Client) GenerateImage(ctx context.Context, req *ImageRequest) (*ImageRe
 	if resp.RequestID == "" {
 		resp.RequestID = meta.RequestID
 	}
+	resp.BalanceAfter = meta.BalanceAfter
 	return &resp, nil
 }
 
@@ -127,5 +156,6 @@ func (c *Client) EditImage(ctx context.Context, req *ImageEditRequest) (*ImageEd
 	if resp.RequestID == "" {
 		resp.RequestID = meta.RequestID
 	}
+	resp.BalanceAfter = meta.BalanceAfter
 	return &resp, nil
 }

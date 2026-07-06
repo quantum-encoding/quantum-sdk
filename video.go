@@ -15,6 +15,17 @@ type VideoRequest struct {
 
 	// AspectRatio specifies the video aspect ratio (e.g. "16:9", "9:16").
 	AspectRatio string `json:"aspect_ratio,omitempty"`
+
+	// IdempotencyKey is sent as the Idempotency-Key header; auto-generated if empty.
+	IdempotencyKey string `json:"-"`
+}
+
+// idempotencyKey returns the caller-set key, auto-generating one if empty.
+func (r *VideoRequest) idempotencyKey() string {
+	if r.IdempotencyKey == "" {
+		r.IdempotencyKey = newIdempotencyKey()
+	}
+	return r.IdempotencyKey
 }
 
 // VideoResponse is the response from video generation.
@@ -27,6 +38,10 @@ type VideoResponse struct {
 
 	// CostTicks is the total cost in ticks.
 	CostTicks int64 `json:"cost_ticks"`
+
+	// BalanceAfter is the wallet balance after this call, from the
+	// X-QAI-Balance-After header. Signed — a claw-back can make it negative.
+	BalanceAfter int64 `json:"-"`
 
 	// RequestID is the unique request identifier.
 	RequestID string `json:"request_id"`
@@ -63,5 +78,6 @@ func (c *Client) GenerateVideo(ctx context.Context, req *VideoRequest) (*VideoRe
 	if resp.RequestID == "" {
 		resp.RequestID = meta.RequestID
 	}
+	resp.BalanceAfter = meta.BalanceAfter
 	return &resp, nil
 }

@@ -42,6 +42,17 @@ type TTSRequest struct {
 
 	// Speed controls the speech rate (provider-dependent).
 	Speed *float64 `json:"speed,omitempty"`
+
+	// IdempotencyKey is sent as the Idempotency-Key header; auto-generated if empty.
+	IdempotencyKey string `json:"-"`
+}
+
+// idempotencyKey returns the caller-set key, auto-generating one if empty.
+func (r *TTSRequest) idempotencyKey() string {
+	if r.IdempotencyKey == "" {
+		r.IdempotencyKey = newIdempotencyKey()
+	}
+	return r.IdempotencyKey
 }
 
 // TTSResponse is the response from text-to-speech.
@@ -60,6 +71,10 @@ type TTSResponse struct {
 
 	// CostTicks is the total cost in ticks.
 	CostTicks int64 `json:"cost_ticks"`
+
+	// BalanceAfter is the wallet balance after this call, from the
+	// X-QAI-Balance-After header. Signed — a claw-back can make it negative.
+	BalanceAfter int64 `json:"-"`
 
 	// RequestID is the unique request identifier.
 	RequestID string `json:"request_id"`
@@ -180,6 +195,7 @@ func (c *Client) Speak(ctx context.Context, req *TTSRequest) (*TTSResponse, erro
 	if resp.RequestID == "" {
 		resp.RequestID = meta.RequestID
 	}
+	resp.BalanceAfter = meta.BalanceAfter
 	return &resp, nil
 }
 
