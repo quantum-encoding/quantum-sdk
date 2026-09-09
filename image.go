@@ -80,6 +80,38 @@ type ImageResponse struct {
 
 	// RequestID is the unique request identifier.
 	RequestID string `json:"request_id"`
+
+	// RevisedPrompt is the prompt the provider actually generated from, when
+	// it rewrote the one it was given. gpt-image routinely rewrites, and the
+	// picture is made from this text rather than from what was sent, so a
+	// caller holding only its own prompt cannot reproduce its own image or
+	// explain why the output drifted. Empty when there was no rewrite.
+	RevisedPrompt string `json:"revised_prompt,omitempty"`
+
+	// Usage is what the charge was computed from, for models priced on tokens
+	// rather than per image. Nil on flat-priced models, whose rate is per
+	// image and checkable without quantities — the gateway sends no object
+	// for them rather than a zeroed one. For a token-priced model it is the
+	// whole audit: two real gpt-image-2 generations on one day came back at
+	// $0.0527 and $0.01628, with nothing else on the wire explaining the
+	// spread.
+	Usage *ImageUsage `json:"usage,omitempty"`
+}
+
+// ImageUsage is the token count behind a token-priced image charge.
+//
+// The gateway omits every bucket it has nothing to report for, and sends no
+// object at all when all of them would be zero, so a nil Usage means the
+// charge has no token basis rather than a token basis of nothing.
+type ImageUsage struct {
+	// PromptTokens is the input billed at the prompt rate.
+	PromptTokens int `json:"prompt_tokens,omitempty"`
+
+	// CompletionTokens is the generated output.
+	CompletionTokens int `json:"completion_tokens,omitempty"`
+
+	// TotalTokens is the provider-reported total across the buckets.
+	TotalTokens int `json:"total_tokens,omitempty"`
 }
 
 // GeneratedImage is a single generated image.
