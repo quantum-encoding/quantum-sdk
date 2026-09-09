@@ -130,6 +130,13 @@ type MusicResponse struct {
 	// Model is the model that generated the music.
 	Model string `json:"model"`
 
+	// DurationSeconds is the length actually generated, when the provider
+	// reports it. Music is duration-metered — Lyria per 30 seconds,
+	// ElevenLabs per minute — and settlement prefers this over the requested
+	// length, so it is the basis of CostTicks. Zero when the provider reports
+	// no length.
+	DurationSeconds float64 `json:"duration_seconds,omitempty"`
+
 	// CostTicks is the total cost in ticks.
 	CostTicks int64 `json:"cost_ticks"`
 

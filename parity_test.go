@@ -132,11 +132,11 @@ func TestAgentRunTranslatesToMissionRequest(t *testing.T) {
 func TestAgentCallRequestJSONShape(t *testing.T) {
 	caps := []string{"search", "read_file"}
 	req := &AgentCallRequest{
-		Model:         "claude-sonnet-4-6",
-		SystemPrompt:  "be concise",
-		Capabilities:  &caps,
+		Model:          "claude-sonnet-4-6",
+		SystemPrompt:   "be concise",
+		Capabilities:   &caps,
 		IdempotencyKey: "qai_explicit_key",
-		MaxTokens:     int32Ptr(1024),
+		MaxTokens:      int32Ptr(1024),
 	}
 	req.Messages = []AgentMessage{{Role: "user", Content: "hi"}}
 	req.Tools = []AgentToolDef{{Name: "search", Description: "web search"}}

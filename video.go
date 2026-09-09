@@ -36,6 +36,20 @@ type VideoResponse struct {
 	// Model is the model that generated the videos.
 	Model string `json:"model"`
 
+	// DurationSeconds is the length of the video actually produced, when the
+	// provider reports it. This is the quantity a per-second model is billed
+	// on — settlement prefers it over the requested duration — so it is the
+	// basis of CostTicks. Zero when the provider reports no length.
+	DurationSeconds float64 `json:"duration_seconds,omitempty"`
+
+	// Usage is the token counts behind a TOKEN-billed video charge. Gemini
+	// Omni is the only such model: it meters output by modality at ~5,792
+	// tokens per second of 720p, so on that path tokens are the whole cost
+	// basis. Nil for per-second and per-clip models, whose cost is a function
+	// of duration instead — a zeroed struct would assert a token basis the
+	// charge does not have.
+	Usage *MediaTokenUsage `json:"usage,omitempty"`
+
 	// CostTicks is the total cost in ticks.
 	CostTicks int64 `json:"cost_ticks"`
 
@@ -45,6 +59,30 @@ type VideoResponse struct {
 
 	// RequestID is the unique request identifier.
 	RequestID string `json:"request_id"`
+}
+
+// MediaTokenUsage is the token breakdown behind a token-billed media charge.
+//
+// The gateway omits every bucket it has nothing to report for, and sends no
+// object at all when all of them would be zero, so a nil Usage means the
+// charge has no token basis rather than a token basis of nothing.
+type MediaTokenUsage struct {
+	// PromptTokens is the input billed at the prompt rate.
+	PromptTokens int `json:"prompt_tokens,omitempty"`
+
+	// CompletionTokens is the output. For Gemini Omni this is the
+	// modality-metered video output, which is most of the charge.
+	CompletionTokens int `json:"completion_tokens,omitempty"`
+
+	// ReasoningTokens is billed at the output rate.
+	ReasoningTokens int `json:"reasoning_tokens,omitempty"`
+
+	// CachedTokens is the input served from cache, billed at the cache-read
+	// rate. Omitted by providers that report no cache hits.
+	CachedTokens int `json:"cached_tokens,omitempty"`
+
+	// TotalTokens is the provider-reported total across the buckets.
+	TotalTokens int `json:"total_tokens,omitempty"`
 }
 
 // GeneratedVideo is a single generated video.

@@ -267,7 +267,7 @@ func TestSendAvatarRealtimeText(t *testing.T) {
 	cases := []struct {
 		name      string
 		req       AvatarRealtimeTextRequest
-		wantDelta any  // nil = must be absent
+		wantDelta any // nil = must be absent
 		wantFinal bool
 	}{
 		{"delta append", AvatarRealtimeTextRequest{Delta: " more"}, " more", false},
