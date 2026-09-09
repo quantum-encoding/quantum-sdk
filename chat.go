@@ -227,11 +227,19 @@ type ChatUsage struct {
 	// report cache hits (Anthropic, Gemini, etc.).
 	CachedTokens int `json:"cached_tokens,omitempty"`
 
+	// CacheWriteTokens is the portion of InputTokens that triggered a cache
+	// WRITE, billed at a premium over standard input (Anthropic charges
+	// 1.25x base at the 5-minute TTL). It OVERLAPS InputTokens, so
+	// reconciling a bill adds the premium on the write rate, never the
+	// tokens twice. Zero on providers that charge no write premium.
+	CacheWriteTokens int `json:"cache_write_tokens,omitempty"`
+
 	OutputTokens int `json:"output_tokens"`
 
-	// ReasoningTokens is the chain-of-thought tokens billed on top of
-	// OutputTokens for reasoning models (Gemini/Vertex report these
-	// separately). Zero when the provider folds them into OutputTokens.
+	// ReasoningTokens is the chain-of-thought tokens billed at the output
+	// rate. Already INSIDE OutputTokens on the non-streaming envelope;
+	// reported beside it on the streaming usage event, where billed output
+	// is OutputTokens + ReasoningTokens.
 	ReasoningTokens int `json:"reasoning_tokens,omitempty"`
 
 	CostTicks int64 `json:"cost_ticks"`
@@ -345,16 +353,18 @@ type StreamToolUse struct {
 
 // rawStreamEvent is the raw JSON from the SSE stream before parsing into typed fields.
 type rawStreamEvent struct {
-	Type            string         `json:"type"`
-	Delta           *StreamDelta   `json:"delta,omitempty"`
-	ID              string         `json:"id,omitempty"`
-	Name            string         `json:"name,omitempty"`
-	Input           map[string]any `json:"input,omitempty"`
-	InputTokens     int            `json:"input_tokens,omitempty"`
-	OutputTokens    int            `json:"output_tokens,omitempty"`
-	ReasoningTokens int            `json:"reasoning_tokens,omitempty"`
-	CostTicks       int64          `json:"cost_ticks,omitempty"`
-	Message         string         `json:"message,omitempty"`
+	Type             string         `json:"type"`
+	Delta            *StreamDelta   `json:"delta,omitempty"`
+	ID               string         `json:"id,omitempty"`
+	Name             string         `json:"name,omitempty"`
+	Input            map[string]any `json:"input,omitempty"`
+	InputTokens      int            `json:"input_tokens,omitempty"`
+	OutputTokens     int            `json:"output_tokens,omitempty"`
+	ReasoningTokens  int            `json:"reasoning_tokens,omitempty"`
+	CachedTokens     int            `json:"cached_tokens,omitempty"`
+	CacheWriteTokens int            `json:"cache_write_tokens,omitempty"`
+	CostTicks        int64          `json:"cost_ticks,omitempty"`
+	Message          string         `json:"message,omitempty"`
 }
 
 // ChatStream sends a streaming text generation request and returns a channel of events.
@@ -434,10 +444,12 @@ func (c *Client) ChatStream(ctx context.Context, req *ChatRequest) (<-chan Strea
 				}
 			case "usage":
 				ev.Usage = &ChatUsage{
-					InputTokens:     raw.InputTokens,
-					OutputTokens:    raw.OutputTokens,
-					ReasoningTokens: raw.ReasoningTokens,
-					CostTicks:       raw.CostTicks,
+					InputTokens:      raw.InputTokens,
+					OutputTokens:     raw.OutputTokens,
+					ReasoningTokens:  raw.ReasoningTokens,
+					CachedTokens:     raw.CachedTokens,
+					CacheWriteTokens: raw.CacheWriteTokens,
+					CostTicks:        raw.CostTicks,
 				}
 			case "error":
 				ev.Error = raw.Message
