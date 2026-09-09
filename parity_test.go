@@ -194,3 +194,75 @@ func TestStreamUsageReasoningTokens(t *testing.T) {
 }
 
 func int32Ptr(v int32) *int32 { return &v }
+
+// TestChatUsageAudioShare pins the audio split on the non-streaming envelope.
+//
+// Several Gemini models price audio input above text — 3.3x on
+// gemini-2.5-flash, 2x on gemini-3.1-flash-lite — so a turn carrying audio
+// costs more than its token counts appear to justify. Without the split a
+// caller sees a charge it cannot account for.
+//
+// The counts are a SHARE of the buckets they belong to, never an addition.
+// Summing them double-counts, which is the obvious way to get this wrong.
+func TestChatUsageAudioShare(t *testing.T) {
+	const body = `{"input_tokens":100000,"output_tokens":250,"cost_ticks":4200,
+		"cached_tokens":20000,"audio_tokens":40000,"cached_audio_tokens":5000}`
+
+	var u ChatUsage
+	if err := json.Unmarshal([]byte(body), &u); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if u.AudioTokens != 40000 {
+		t.Errorf("AudioTokens = %d, want 40000", u.AudioTokens)
+	}
+	if u.CachedAudioTokens != 5000 {
+		t.Errorf("CachedAudioTokens = %d, want 5000", u.CachedAudioTokens)
+	}
+	if u.AudioTokens > u.InputTokens {
+		t.Error("audio is a share of the input and can never exceed it")
+	}
+	if u.CachedAudioTokens > u.CachedTokens {
+		t.Error("cached audio is a share of the cached input and can never exceed it")
+	}
+	if text := u.InputTokens - u.AudioTokens; text != 60000 {
+		t.Errorf("text remainder = %d, want 60000 — the base rate applies to this", text)
+	}
+}
+
+// A turn with no audio, or a model that prices audio at its text rate,
+// reports nothing and the fields stay off the wire entirely.
+func TestChatUsageAudioOmittedWhenAbsent(t *testing.T) {
+	var u ChatUsage
+	if err := json.Unmarshal([]byte(`{"input_tokens":10,"output_tokens":2,"cost_ticks":7}`), &u); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if u.AudioTokens != 0 || u.CachedAudioTokens != 0 {
+		t.Errorf("audio = %d/%d, want 0/0", u.AudioTokens, u.CachedAudioTokens)
+	}
+	blob, err := json.Marshal(u)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(blob), "audio") {
+		t.Errorf("audio fields must be omitted when zero, got %s", blob)
+	}
+}
+
+// The streaming usage event carries the same split as the envelope, or a
+// caller reconciling a stream reaches a different answer than one
+// reconciling a response.
+func TestStreamUsageAudioShare(t *testing.T) {
+	const ev = `{"type":"usage","input_tokens":100000,"output_tokens":40,
+		"cached_tokens":20000,"audio_tokens":40000,"cached_audio_tokens":5000,"cost_ticks":12345}`
+
+	var raw rawStreamEvent
+	if err := json.Unmarshal([]byte(ev), &raw); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if raw.AudioTokens != 40000 || raw.CachedAudioTokens != 5000 {
+		t.Fatalf("raw audio = %d/%d, want 40000/5000", raw.AudioTokens, raw.CachedAudioTokens)
+	}
+	if raw.AudioTokens > raw.InputTokens {
+		t.Error("audio is a share of the input and can never exceed it")
+	}
+}

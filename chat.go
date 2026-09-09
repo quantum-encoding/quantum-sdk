@@ -234,6 +234,23 @@ type ChatUsage struct {
 	// tokens twice. Zero on providers that charge no write premium.
 	CacheWriteTokens int `json:"cache_write_tokens,omitempty"`
 
+	// AudioTokens is the AUDIO portion of InputTokens. Several Gemini models
+	// charge a premium for audio input — 3.3x the text rate on
+	// gemini-2.5-flash, 2x on gemini-3.1-flash-lite — so a turn carrying
+	// audio costs more than its token counts appear to justify.
+	//
+	// It OVERLAPS InputTokens and is never added to it: reconciling a bill
+	// applies the audio rate to these tokens and the text rate to the
+	// remainder. Zero when the turn carried no audio, and zero on models
+	// that price audio at their text rate — gpt-5.x, Claude, and even
+	// gemini-2.5-pro and gemini-3.5-flash charge no premium at all.
+	AudioTokens int `json:"audio_tokens,omitempty"`
+
+	// CachedAudioTokens is the audio portion of CachedTokens, billed at the
+	// model's cached AUDIO rate rather than its cached text rate. It
+	// overlaps CachedTokens the way AudioTokens overlaps InputTokens.
+	CachedAudioTokens int `json:"cached_audio_tokens,omitempty"`
+
 	OutputTokens int `json:"output_tokens"`
 
 	// ReasoningTokens is the chain-of-thought tokens billed at the output
@@ -353,18 +370,20 @@ type StreamToolUse struct {
 
 // rawStreamEvent is the raw JSON from the SSE stream before parsing into typed fields.
 type rawStreamEvent struct {
-	Type             string         `json:"type"`
-	Delta            *StreamDelta   `json:"delta,omitempty"`
-	ID               string         `json:"id,omitempty"`
-	Name             string         `json:"name,omitempty"`
-	Input            map[string]any `json:"input,omitempty"`
-	InputTokens      int            `json:"input_tokens,omitempty"`
-	OutputTokens     int            `json:"output_tokens,omitempty"`
-	ReasoningTokens  int            `json:"reasoning_tokens,omitempty"`
-	CachedTokens     int            `json:"cached_tokens,omitempty"`
-	CacheWriteTokens int            `json:"cache_write_tokens,omitempty"`
-	CostTicks        int64          `json:"cost_ticks,omitempty"`
-	Message          string         `json:"message,omitempty"`
+	Type              string         `json:"type"`
+	Delta             *StreamDelta   `json:"delta,omitempty"`
+	ID                string         `json:"id,omitempty"`
+	Name              string         `json:"name,omitempty"`
+	Input             map[string]any `json:"input,omitempty"`
+	InputTokens       int            `json:"input_tokens,omitempty"`
+	OutputTokens      int            `json:"output_tokens,omitempty"`
+	ReasoningTokens   int            `json:"reasoning_tokens,omitempty"`
+	CachedTokens      int            `json:"cached_tokens,omitempty"`
+	CacheWriteTokens  int            `json:"cache_write_tokens,omitempty"`
+	AudioTokens       int            `json:"audio_tokens,omitempty"`
+	CachedAudioTokens int            `json:"cached_audio_tokens,omitempty"`
+	CostTicks         int64          `json:"cost_ticks,omitempty"`
+	Message           string         `json:"message,omitempty"`
 }
 
 // ChatStream sends a streaming text generation request and returns a channel of events.
@@ -444,12 +463,14 @@ func (c *Client) ChatStream(ctx context.Context, req *ChatRequest) (<-chan Strea
 				}
 			case "usage":
 				ev.Usage = &ChatUsage{
-					InputTokens:      raw.InputTokens,
-					OutputTokens:     raw.OutputTokens,
-					ReasoningTokens:  raw.ReasoningTokens,
-					CachedTokens:     raw.CachedTokens,
-					CacheWriteTokens: raw.CacheWriteTokens,
-					CostTicks:        raw.CostTicks,
+					InputTokens:       raw.InputTokens,
+					OutputTokens:      raw.OutputTokens,
+					ReasoningTokens:   raw.ReasoningTokens,
+					CachedTokens:      raw.CachedTokens,
+					CacheWriteTokens:  raw.CacheWriteTokens,
+					AudioTokens:       raw.AudioTokens,
+					CachedAudioTokens: raw.CachedAudioTokens,
+					CostTicks:         raw.CostTicks,
 				}
 			case "error":
 				ev.Error = raw.Message
