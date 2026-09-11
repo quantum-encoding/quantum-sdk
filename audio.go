@@ -28,23 +28,89 @@ type SpeechToTextResponse = STTResponse
 
 // TTSRequest is the request body for text-to-speech.
 type TTSRequest struct {
-	// Model is the TTS model (e.g. "tts-1", "eleven_multilingual_v2", "grok-3-tts").
-	Model string `json:"model"`
+	// Model is the TTS model. Empty = the gateway default,
+	// "gemini-3.1-flash-tts-preview", paired with the "Laomedeia" voice — so
+	// Text alone is a complete request. Also "gemini-2.5-flash-preview-tts",
+	// "gemini-2.5-pro-preview-tts", OpenAI "openai-tts-1" / "gpt-4o-mini-tts",
+	// xAI "grok-tts", ElevenLabs "eleven_*".
+	Model string `json:"model,omitempty"`
 
-	// Text is the text to synthesise into speech.
+	// Text is the text to synthesise into speech. May carry inline audio tags
+	// ("[whispers]", "[excited]", …) and, for dialogue, the speaker labels
+	// named in Speakers.
 	Text string `json:"text"`
 
-	// Voice is the voice to use (e.g. "alloy", "echo", "nova", "Rachel").
+	// Voice is the voice to use — an id from ListVoices. Gemini's default is
+	// "Laomedeia". Ignored when Speakers is set.
 	Voice string `json:"voice,omitempty"`
 
-	// OutputFormat is the audio format (e.g. "mp3", "wav", "opus"). Default: "mp3".
+	// OutputFormat is the audio format: "mp3" (default), "wav", "opus", "pcm".
 	OutputFormat string `json:"format,omitempty"`
 
-	// Speed controls the speech rate (provider-dependent).
+	// Speed is the speech rate, 0.7–1.5. xAI only — on Gemini, ask for it in
+	// Instructions ("at a slow, measured pace").
 	Speed *float64 `json:"speed,omitempty"`
+
+	// Instructions is style direction: tone, pace, accent, character. On
+	// Gemini it is prepended to the prompt and is the main way to steer a
+	// read, since Gemini exposes no knobs for any of it. On OpenAI only
+	// gpt-4o-mini-tts honours it — tts-1/tts-1-hd reject the field and the
+	// gateway drops it for them.
+	Instructions string `json:"instructions,omitempty"`
+
+	// Language is a BCP-47 tag, e.g. "en-GB", "es-ES", or "auto". Gemini
+	// detects the language on its own; set this to pin the pronunciation or
+	// accent family. Also drives xAI pronunciation, where an English default
+	// sounds robotic on other languages.
+	Language string `json:"language,omitempty"`
+
+	// SampleRate is the output sample rate in Hz, e.g. 24000 or 44100. xAI only.
+	SampleRate int `json:"sample_rate,omitempty"`
+
+	// BitRate is the output bit rate in bits/sec, e.g. 128000. xAI only.
+	BitRate int `json:"bit_rate,omitempty"`
+
+	// VoiceSettings tunes ElevenLabs synthesis. Ignored by every other
+	// provider.
+	VoiceSettings *TTSVoiceSettings `json:"voice_settings,omitempty"`
+
+	// Speakers turns Text into a two-voice dialogue on Gemini TTS. Each entry
+	// pairs a speaker label used in Text ("Lacey: …") with the prebuilt voice
+	// that reads it. EXACTLY TWO — the gateway rejects any other count with a
+	// 400 — and Voice is then ignored.
+	Speakers []TTSSpeaker `json:"speakers,omitempty"`
 
 	// IdempotencyKey is sent as the Idempotency-Key header; auto-generated if empty.
 	IdempotencyKey string `json:"-"`
+}
+
+// TTSVoiceSettings tunes ElevenLabs synthesis.
+//
+// Every field is a pointer because an absent knob leaves the provider default
+// alone, which is not the same as sending 0: 0.0 stability is a real setting
+// the provider honours, so a zeroed struct silently retunes the voice.
+type TTSVoiceSettings struct {
+	// Stability is 0.0–1.0. Lower is more expressive and less consistent.
+	Stability *float64 `json:"stability,omitempty"`
+
+	// SimilarityBoost is 0.0–1.0 — how closely to track the original voice.
+	SimilarityBoost *float64 `json:"similarity_boost,omitempty"`
+
+	// Style is 0.0–1.0 style exaggeration.
+	Style *float64 `json:"style,omitempty"`
+
+	// UseSpeakerBoost boosts resemblance to the original speaker.
+	UseSpeakerBoost *bool `json:"use_speaker_boost,omitempty"`
+}
+
+// TTSSpeaker is one voice in a Gemini two-speaker dialogue.
+type TTSSpeaker struct {
+	// Name is the label this speaker's lines carry in the text, e.g. "Lacey"
+	// for lines written as "Lacey: …".
+	Name string `json:"name"`
+
+	// Voice is the prebuilt voice that reads those lines, e.g. "Laomedeia".
+	Voice string `json:"voice"`
 }
 
 // idempotencyKey returns the caller-set key, auto-generating one if empty.

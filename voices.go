@@ -42,7 +42,7 @@ type CloneVoiceFile struct {
 	MimeType string `json:"mime_type"`
 }
 
-// VoiceInfo describes an available voice.
+// VoiceInfo describes an available voice, as returned by GET /qai/v1/voices.
 type VoiceInfo struct {
 	// VoiceID is the voice identifier used in TTS requests.
 	VoiceID string `json:"voice_id"`
@@ -50,8 +50,23 @@ type VoiceInfo struct {
 	// Name is the human-readable voice name.
 	Name string `json:"name"`
 
-	// Category is the voice category (e.g. "premade", "cloned").
+	// Category is the voice category (e.g. "premade", "cloned",
+	// "professional").
 	Category string `json:"category"`
+
+	// Provider is the provider that serves this voice (e.g. "gemini",
+	// "openai", "elevenlabs").
+	Provider string `json:"provider,omitempty"`
+
+	// Model is the TTS model id to pass to Speak for this voice, so callers
+	// never hardcode the provider-to-model mapping. For ElevenLabs, which
+	// serves several models against one voice, this is the standard default
+	// and may be overridden.
+	Model string `json:"model,omitempty"`
+
+	// IsCloned reports whether this is a cloned or professional voice rather
+	// than a prebuilt one.
+	IsCloned bool `json:"is_cloned,omitempty"`
 
 	// Description describes the voice characteristics.
 	Description string `json:"description,omitempty"`

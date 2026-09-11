@@ -155,12 +155,80 @@ for _, img := range images.Images {
 ### Text-to-Speech
 
 ```go
-audio, err := client.Speak(ctx, "Welcome to Quantum AI!", "alloy", "mp3")
+audio, err := client.Speak(ctx, &qai.TTSRequest{
+    Model:        "gpt-4o-mini-tts",
+    Text:         "Welcome to Quantum AI!",
+    Voice:        "alloy",
+    OutputFormat: "mp3",
+})
 if err != nil {
     return err
 }
-fmt.Println(audio.AudioURL)
+// The audio arrives inline, base64-encoded — there is no URL to fetch.
+fmt.Printf("%d bytes of %s\n", audio.SizeBytes, audio.Format)
 ```
+
+### Steering a Gemini voice
+
+The gateway's house voice is **Gemini 3.1 Flash TTS**
+(`gemini-3.1-flash-tts-preview`) with the **Laomedeia** voice; both apply when
+the request names neither, so `Text` alone is a complete request.
+
+Gemini has no knobs for tone, accent or pace. You steer it in prose — with
+`Instructions` for the whole read, and with inline tags inside `Text` for
+moment-to-moment inflection.
+
+```go
+audio, err := client.Speak(ctx, &qai.TTSRequest{
+    // No model: the gateway supplies Gemini 3.1 Flash TTS + Laomedeia.
+    Text: "Hi, this is Lacey from CRG Direct. [warmly] How can I help today?",
+    Instructions: "Read aloud as a friendly, professional customer-service " +
+        "assistant with a natural British accent, at a natural easy pace",
+    Language: "en-GB",
+})
+if err != nil {
+    return err
+}
+fmt.Printf("%d bytes of %s\n", audio.SizeBytes, audio.Format)
+```
+
+`Instructions` carries tone and character ("like telling a friend about
+something you love"), accent ("with a natural British accent" — pair it with
+`Language` so the pronunciation family matches), and pace ("slow down on the
+phone number"). Spell digits with separators — `0-1-2-3, 4-5-6` — to have them
+read one at a time.
+
+**Inline tags** go in the text itself: `[amazed] [crying] [curious] [excited]
+[sighs] [gasp] [giggles] [laughs] [mischievously] [panicked] [sarcastic]
+[serious] [shouting] [tired] [trembling] [whispers]`, plus free-form ones like
+`[like a cartoon dog]`.
+
+**Two-speaker dialogue** replaces `Voice` with `Speakers`. Exactly two — the
+gateway rejects any other count with a 400 — and the text carries each
+speaker's lines under the matching label:
+
+```go
+audio, err := client.Speak(ctx, &qai.TTSRequest{
+    Text: "Lacey: Hi, this is Lacey from CRG Direct. How can I help?\n" +
+        "Customer: [excited] Hi! I'm calling about Tuesday's installation.",
+    Instructions: "Lacey is calm and professional; the customer is cheerful",
+    Speakers: []qai.TTSSpeaker{
+        {Name: "Lacey", Voice: "Laomedeia"},
+        {Name: "Customer", Voice: "Puck"},
+    },
+})
+```
+
+All 30 Gemini prebuilt voices (Zephyr, Puck, Charon, Kore, Laomedeia,
+Sulafat, …) work on every Gemini TTS model. `client.ListVoices(ctx)` returns
+the catalogue with each voice's `Provider` and the `Model` to pass back for it,
+so a picker never hardcodes the provider-to-model mapping.
+
+Limits: 32k-token session context, two speakers maximum, and quality drifts
+past a few minutes of audio — split long scripts.
+
+`Speed`, `SampleRate` and `BitRate` are xAI-only; `VoiceSettings` is
+ElevenLabs-only. On Gemini, ask for pace in `Instructions` instead.
 
 ### Web Search
 
