@@ -42,6 +42,18 @@ type ChatRequest struct {
 	// An unknown value is rejected with 400 by the gateway.
 	ReasoningEffort string `json:"reasoning_effort,omitempty"`
 
+	// PromptCacheKey pins every turn of one conversation to the same
+	// provider prompt-cache shard. Any stable string the client keeps per
+	// conversation: the gateway hashes it with the caller's identity before
+	// forwarding it as OpenAI/xAI prompt_cache_key (or x-grok-conv-id on the
+	// xAI chat-completions lane). Empty = derived from the caller's identity
+	// alone, which puts all of one user's conversations on one shard.
+	// Generate one per conversation object and reuse it on every turn.
+	//
+	// Honored by /qai/v1/chat only: the session endpoint derives its key
+	// from the session ID and ignores a client-supplied one.
+	PromptCacheKey string `json:"prompt_cache_key,omitempty"`
+
 	// CachedContent is the Vertex resource name of a previously created
 	// context cache (e.g. "cachedContents/abc123"). When set, the cached
 	// content is billed at the cached-read rate and need not be re-sent.
@@ -49,9 +61,22 @@ type ChatRequest struct {
 	// match this request's model.
 	CachedContent string `json:"cached_content,omitempty"`
 
-	// ProviderOptions passes provider-specific settings (e.g. Anthropic thinking, xAI search).
+	// ProviderOptions passes provider-specific settings, keyed by provider.
+	// The value is any JSON object, so a key the gateway documents but this
+	// SDK version does not name still rides through.
 	//
 	// Example: map[string]any{"anthropic": map[string]any{"thinking": map[string]any{"budget_tokens": 10000}}}
+	//
+	// Documented keys:
+	//
+	//	provider_options.openai.reasoning_summary  auto | concise | detailed | none
+	//	provider_options.openai.reasoning_mode     standard | pro
+	//	provider_options.openai.verbosity          low | medium | high
+	//	provider_options.openai.text_format        text | json_object
+	//	provider_options.xai.native_files          bool — send files to xAI
+	//	                                           natively instead of
+	//	                                           extracting them gateway-side
+	//	provider_options.region                    americas | europe | asia
 	ProviderOptions map[string]any `json:"provider_options,omitempty"`
 
 	// IdempotencyKey is sent as the Idempotency-Key header so a retry of the
@@ -100,7 +125,8 @@ type ChatMessage struct {
 // ContentBlock is a single block in the response/request content array.
 // Supports text, thinking, tool_use, image, and file types.
 type ContentBlock struct {
-	// Type is one of "text", "thinking", "tool_use", "image", or "file".
+	// Type is one of "text", "thinking", "reasoning", "tool_use", "image",
+	// "file", or "file_uri".
 	Type string `json:"type"`
 
 	// BlockType is an alias for Type (sdk-graph canonical name).
@@ -118,8 +144,30 @@ type ContentBlock struct {
 	// Input is the function arguments for "tool_use" blocks.
 	Input map[string]any `json:"input,omitempty"`
 
-	// ThoughtSignature is the Gemini thought signature — must be echoed back with tool results.
+	// ThoughtSignature is the Gemini thought signature (base64 on the wire).
+	// It rides "tool_use" blocks and, on Gemini 3, the "text" block of a turn
+	// that ended in text. Echo it back on the corresponding block of the next
+	// turn's assistant message. A streaming turn that ends in text carries it
+	// on the "thought_signature" event instead — see StreamEvent.
 	ThoughtSignature []byte `json:"thought_signature,omitempty"`
+
+	// Reasoning is the provider's own reasoning item, verbatim, on a block of
+	// type "reasoning". Opaque: never inspect or rebuild it. Pass the whole
+	// block back untouched, IN THE POSITION IT ARRIVED IN, on the next turn's
+	// assistant message — its place among the "tool_use" blocks is how the
+	// provider learns where the reasoning sat, and replaying it behind the
+	// call it reasoned about is a different conversation the provider
+	// rejects. Dropping it re-bills the reasoning tokens on every round of a
+	// tool loop.
+	//
+	// Distinct from a "thinking" block, which is the human-readable summary
+	// of the same turn: one is for the reader, one is for the wire.
+	Reasoning json.RawMessage `json:"reasoning,omitempty"`
+
+	// MintedBy names the model that produced a "reasoning" block. Reasoning
+	// state is bound to its model, so a block is never replayed to a
+	// different one.
+	MintedBy string `json:"minted_by,omitempty"`
 
 	// Data is base64-encoded content for "image" and "file" blocks.
 	Data string `json:"data,omitempty"`
@@ -334,7 +382,8 @@ func (c *Client) Chat(ctx context.Context, req *ChatRequest) (*ChatResponse, err
 
 // StreamEvent is a single event from an SSE chat stream.
 type StreamEvent struct {
-	// Type is the event type: "content_delta", "thinking_delta", "tool_use", "usage", "heartbeat", "error", "done".
+	// Type is the event type: "content_delta", "thinking_delta", "tool_use",
+	// "usage", "thought_signature", "heartbeat", "error", "done".
 	Type string `json:"type"`
 
 	// EventType is an alias for Type (sdk-graph canonical name).
@@ -348,6 +397,14 @@ type StreamEvent struct {
 
 	// Usage is populated for usage events.
 	Usage *ChatUsage `json:"usage,omitempty"`
+
+	// ThoughtSignature is Gemini 3's signature for a stream that ended in
+	// text, on the "thought_signature" event the gateway sends just before
+	// "done". It also rides the atomic "tool_use" event. Store it on the
+	// assistant block echoed back next turn — the same value
+	// ContentBlock.ThoughtSignature carries on a non-streaming response.
+	// Nil on every other event and on providers that issue no signature.
+	ThoughtSignature []byte `json:"thought_signature,omitempty"`
 
 	// Error is populated for error events.
 	Error string `json:"error,omitempty"`
@@ -383,6 +440,7 @@ type rawStreamEvent struct {
 	AudioTokens       int            `json:"audio_tokens,omitempty"`
 	CachedAudioTokens int            `json:"cached_audio_tokens,omitempty"`
 	CostTicks         int64          `json:"cost_ticks,omitempty"`
+	ThoughtSignature  []byte         `json:"thought_signature,omitempty"`
 	Message           string         `json:"message,omitempty"`
 }
 
@@ -456,6 +514,9 @@ func (c *Client) ChatStream(ctx context.Context, req *ChatRequest) (<-chan Strea
 			case "content_delta", "thinking_delta":
 				ev.Delta = raw.Delta
 			case "tool_use":
+				// Gemini rides its signature on this event; the client
+				// echoes it on the tool_use block of the next turn.
+				ev.ThoughtSignature = raw.ThoughtSignature
 				ev.ToolUse = &StreamToolUse{
 					ID:    raw.ID,
 					Name:  raw.Name,
@@ -472,6 +533,8 @@ func (c *Client) ChatStream(ctx context.Context, req *ChatRequest) (<-chan Strea
 					CachedAudioTokens: raw.CachedAudioTokens,
 					CostTicks:         raw.CostTicks,
 				}
+			case "thought_signature":
+				ev.ThoughtSignature = raw.ThoughtSignature
 			case "error":
 				ev.Error = raw.Message
 			case "heartbeat":
