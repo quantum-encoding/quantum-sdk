@@ -19,8 +19,13 @@ import (
 )
 
 func main() {
-    client := qai.NewClient("qai_k_your_key_here")
-    resp, err := client.Chat(context.Background(), "gemini-2.5-flash", "Hello! What is quantum computing?")
+    client := qai.New("qai_k_your_key_here")
+    resp, err := client.Chat(context.Background(), &qai.ChatRequest{
+        Model: "gemini-2.5-flash",
+        Messages: []qai.ChatMessage{
+            {Role: "user", Content: "Hello! What is quantum computing?"},
+        },
+    })
     if err != nil {
         panic(err)
     }
@@ -32,8 +37,8 @@ func main() {
 
 - 110+ endpoints across 10 AI providers and 45+ models
 - `context.Context` on every call for cancellation and timeouts
-- Streaming via callback or channel-based APIs
-- No external dependencies beyond the standard library
+- Streaming as a channel of events (`<-chan qai.StreamEvent`)
+- The standard library only, plus `nhooyr.io/websocket` for realtime voice sessions
 - Strongly typed request/response structs
 - Agent orchestration with SSE event streams
 - GPU/CPU compute rental (requires per-account admin approval)
@@ -44,16 +49,17 @@ func main() {
 ### Chat Completion
 
 ```go
-client := qai.NewClient("qai_k_your_key_here")
+client := qai.New("qai_k_your_key_here")
 
-resp, err := client.ChatRequest(ctx, &qai.ChatRequest{
+temperature, maxTokens := 0.7, 1000
+resp, err := client.Chat(ctx, &qai.ChatRequest{
     Model: "claude-opus-4-8",
     Messages: []qai.ChatMessage{
-        qai.SystemMessage("You are a helpful assistant."),
-        qai.UserMessage("Explain goroutines in Go"),
+        {Role: "system", Content: "You are a helpful assistant."},
+        {Role: "user", Content: "Explain goroutines in Go"},
     },
-    Temperature: qai.Float64(0.7),
-    MaxTokens:   qai.Int(1000),
+    Temperature: &temperature,
+    MaxTokens:   &maxTokens,
 })
 if err != nil {
     return err
@@ -64,14 +70,21 @@ fmt.Println(resp.Text())
 ### Streaming
 
 ```go
-err := client.ChatStream(ctx, &qai.ChatRequest{
+events, err := client.ChatStream(ctx, &qai.ChatRequest{
     Model:    "claude-opus-4-8",
-    Messages: []qai.ChatMessage{qai.UserMessage("Write a haiku about Go")},
-}, func(event *qai.StreamEvent) {
-    if event.DeltaText() != "" {
-        fmt.Print(event.DeltaText())
-    }
+    Messages: []qai.ChatMessage{{Role: "user", Content: "Write a haiku about Go"}},
 })
+if err != nil {
+    return err
+}
+for ev := range events {
+    if ev.Error != "" {
+        return fmt.Errorf("stream: %s", ev.Error)
+    }
+    if ev.Type == "content_delta" && ev.Delta != nil {
+        fmt.Print(ev.Delta.Text)
+    }
+}
 ```
 
 ### Reasoning state across a tool loop
@@ -86,9 +99,9 @@ every round of the loop.
 The simplest correct thing is to hand the whole `Content` slice back:
 
 ```go
-messages := []qai.ChatMessage{qai.UserMessage("What is the weather in Oslo?")}
+messages := []qai.ChatMessage{{Role: "user", Content: "What is the weather in Oslo?"}}
 
-resp, err := client.ChatRequest(ctx, &qai.ChatRequest{
+resp, err := client.Chat(ctx, &qai.ChatRequest{
     Model:    "gpt-5.6",
     Messages: messages,
     // One key per conversation, reused on every turn, so all of them land
@@ -122,7 +135,7 @@ blocks. Streaming delivers it as a `thought_signature` event just before
 documents but this SDK version does not name still rides through:
 
 ```go
-resp, err := client.ChatRequest(ctx, &qai.ChatRequest{
+resp, err := client.Chat(ctx, &qai.ChatRequest{
     Model:    "gpt-5.6",
     Messages: messages,
     ProviderOptions: map[string]any{
@@ -143,12 +156,16 @@ every lane; each adapter folds a tier its model lacks onto the nearest one.
 ### Image Generation
 
 ```go
-images, err := client.GenerateImage(ctx, "grok-imagine-image", "A cosmic duck in space")
+images, err := client.GenerateImage(ctx, &qai.ImageRequest{
+    Model:  "grok-imagine-image",
+    Prompt: "A cosmic duck in space",
+})
 if err != nil {
     return err
 }
+// Each image arrives inline, base64-encoded — there is no URL to fetch.
 for _, img := range images.Images {
-    fmt.Println(img.URL)
+    fmt.Printf("image %d: %s, %d base64 bytes\n", img.Index, img.Format, len(img.Base64Data))
 }
 ```
 
@@ -233,11 +250,11 @@ ElevenLabs-only. On Gemini, ask for pace in `Instructions` instead.
 ### Web Search
 
 ```go
-results, err := client.WebSearch(ctx, "latest Go releases 2026")
+results, err := client.WebSearch(ctx, "latest Go releases 2026", nil)
 if err != nil {
     return err
 }
-for _, r := range results.Results {
+for _, r := range results.Web {
     fmt.Printf("%s: %s\n", r.Title, r.URL)
 }
 ```
@@ -245,16 +262,22 @@ for _, r := range results.Results {
 ### Agent Orchestration
 
 ```go
-err := client.AgentRun(ctx, "Research quantum computing breakthroughs",
-    func(event *qai.AgentEvent) {
-        switch event.Type {
-        case "content_delta":
-            fmt.Print(event.Content)
-        case "done":
-            fmt.Println("\n--- Done ---")
-        }
-    },
-)
+events, err := client.AgentRun(ctx, &qai.AgentRequest{
+    Task: "Research quantum computing breakthroughs",
+})
+if err != nil {
+    return err
+}
+for ev := range events {
+    switch {
+    case ev.Error != "":
+        return fmt.Errorf("agent: %s", ev.Error)
+    case ev.Type == "content_delta" && ev.Delta != nil:
+        fmt.Print(ev.Delta.Text)
+    case ev.Done:
+        fmt.Println("\n--- Done ---")
+    }
+}
 ```
 
 ## All Endpoints
@@ -287,7 +310,7 @@ err := client.AgentRun(ctx, "Research quantum computing breakthroughs",
 Pass your API key when creating the client:
 
 ```go
-client := qai.NewClient("qai_k_your_key_here")
+client := qai.New("qai_k_your_key_here")
 ```
 
 The SDK sends it as the `X-API-Key` header. Both `qai_...` (primary) and `qai_k_...` (scoped) keys are supported. You can also use `Authorization: Bearer <key>`.
@@ -302,16 +325,14 @@ The **Lifetime tier** offers 0% margin at-cost pricing via a one-time payment.
 
 ## Other SDKs
 
-All SDKs are at v0.4.0 with type parity verified by scanner.
-
 | Language | Package | Install |
 |----------|---------|---------|
 | Rust | quantum-sdk | `cargo add quantum-sdk` |
-| **Go** | quantum-sdk | `go get github.com/quantum-encoding/quantum-sdk` |
-| TypeScript | @quantum-encoding/quantum-sdk | `npm i @quantum-encoding/quantum-sdk` |
-| Python | quantum-sdk | `pip install quantum-sdk` |
-| Swift | QuantumSDK | Swift Package Manager |
-| Kotlin | quantum-sdk | Gradle dependency |
+| **Go** | github.com/quantum-encoding/quantum-sdk | `go get github.com/quantum-encoding/quantum-sdk` |
+| TypeScript | quantum-ai-sdk | `npm install quantum-ai-sdk` |
+| Python | quantum-ai-sdk | `pip install quantum-ai-sdk` |
+| Swift | QuantumSDK | Swift Package Manager: `https://github.com/quantum-encoding/quantum-sdk-swift.git` |
+| Kotlin | ai.quantumencoding:quantum-sdk | `implementation("ai.quantumencoding:quantum-sdk:0.2.0")` |
 
 MCP server: `npx @quantum-encoding/ai-conductor-mcp`
 
