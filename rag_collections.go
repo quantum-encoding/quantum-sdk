@@ -37,94 +37,91 @@ type Collection struct {
 
 // CollectionDocument is a document within a collection.
 type CollectionDocument struct {
-	// FileID is the document file ID.
+	// ID is the gateway-issued document identifier.
+	ID string `json:"id"`
+
+	// CollectionID is the collection the document belongs to.
+	CollectionID string `json:"collection_id"`
+
+	// FileID is the provider's own file ID.
 	FileID string `json:"file_id"`
 
-	// Name is the document filename.
-	Name string `json:"name"`
+	// Filename is the uploaded filename.
+	Filename string `json:"filename"`
 
-	// SizeBytes is the document size in bytes.
-	SizeBytes int64 `json:"size_bytes,omitempty"`
+	// Status is the indexing status. The upload route records "indexed" as
+	// soon as the provider accepts the file.
+	Status string `json:"status"`
 
-	// ContentType is the MIME content type.
-	ContentType string `json:"content_type,omitempty"`
+	// Chunks is the number of chunks the document was split into. The upload
+	// route never sets it, so it reads 0.
+	Chunks int `json:"chunks"`
 
-	// ProcessingStatus is the current processing status.
-	ProcessingStatus string `json:"processing_status,omitempty"`
-
-	// DocumentStatus is the document lifecycle status.
-	DocumentStatus string `json:"document_status,omitempty"`
-
-	// Indexed indicates whether the document has been indexed.
-	Indexed *bool `json:"indexed,omitempty"`
-
-	// CreatedAt is the ISO timestamp of creation.
-	CreatedAt string `json:"created_at,omitempty"`
+	// UploadedAt is the RFC 3339 upload timestamp.
+	UploadedAt string `json:"uploaded_at"`
 }
 
-// CollectionSearchResult is a single result from collection search.
+// CollectionDetail is one collection with its documents, as
+// GET /qai/v1/rag/collections/{id} returns it.
+type CollectionDetail struct {
+	// Collection is the collection record.
+	Collection Collection `json:"collection"`
+
+	// Documents are the documents uploaded to it.
+	Documents []CollectionDocument `json:"documents"`
+}
+
+// CollectionSearchResult is one chunk matched by a collection search.
 type CollectionSearchResult struct {
-	// Content is the matching text content.
+	// Content is the matched chunk text.
 	Content string `json:"content"`
 
-	// Score is the relevance score.
-	Score float64 `json:"score,omitempty"`
+	// Score is the relevance score; results arrive highest first.
+	Score float64 `json:"score"`
 
-	// FileID is the source file ID.
-	FileID string `json:"file_id,omitempty"`
+	// Collection is the name of the collection the chunk came from.
+	Collection string `json:"collection"`
 
-	// CollectionID is the source collection ID.
-	CollectionID string `json:"collection_id,omitempty"`
+	// CollectionID is the ID of the collection the chunk came from.
+	CollectionID string `json:"collection_id"`
 
-	// Metadata contains additional result metadata.
-	Metadata json.RawMessage `json:"metadata,omitempty"`
+	// DocumentID is the provider's document ID, when it reported one.
+	DocumentID string `json:"document_id,omitempty"`
+
+	// Filename is the source filename, when the provider reported one.
+	Filename string `json:"filename,omitempty"`
+
+	// IsShared is true when the chunk came from a shared collection rather
+	// than one the caller owns.
+	IsShared bool `json:"is_shared"`
 }
 
 // CollectionSearchRequest is the request body for collection search.
 type CollectionSearchRequest struct {
-	// Query is the search query.
+	// Query is the search query (required).
 	Query string `json:"query"`
 
-	// CollectionIDs is the list of collection IDs to search.
-	CollectionIDs []string `json:"collection_ids"`
+	// CollectionIDs limits the search to these collections. Empty searches
+	// every collection the caller can read, their own and the shared ones.
+	// IDs the caller cannot read are skipped without an error.
+	CollectionIDs []string `json:"collection_ids,omitempty"`
 
-	// Mode is the search mode (e.g. "hybrid", "semantic", "keyword").
-	Mode string `json:"mode,omitempty"`
-
-	// MaxResults is the maximum number of results to return.
-	MaxResults int `json:"max_results,omitempty"`
+	// MaxChunks caps the results across all collections. 0 lets the gateway
+	// apply its default of 10.
+	MaxChunks int `json:"max_chunks,omitempty"`
 }
 
-// CollectionUploadResult is the result of uploading a document to a collection.
-type CollectionUploadResult struct {
-	// FileID is the uploaded file ID.
-	FileID string `json:"file_id"`
-
-	// Filename is the original filename.
-	Filename string `json:"filename"`
-
-	// Bytes is the uploaded file size in bytes.
-	Bytes int64 `json:"bytes,omitempty"`
-}
+// CollectionUploadResult is the document record an upload creates.
+type CollectionUploadResult = CollectionDocument
 
 // collectionsListResponse is the API response wrapper for collection listing.
 type collectionsListResponse struct {
 	Collections []Collection `json:"collections"`
 }
 
-// collectionDocumentsResponse is the API response wrapper for document listing.
-type collectionDocumentsResponse struct {
-	Documents []CollectionDocument `json:"documents"`
-}
-
 // collectionSearchResponse is the API response wrapper for collection search.
 type collectionSearchResponse struct {
 	Results []CollectionSearchResult `json:"results"`
-}
-
-// deleteCollectionResponse is the API response wrapper for collection deletion.
-type deleteCollectionResponse struct {
-	Message string `json:"message"`
 }
 
 // createCollectionRequest is the request body for creating a collection.
@@ -153,9 +150,10 @@ func (c *Client) CollectionsCreate(ctx context.Context, name string) (*Collectio
 	return &resp, nil
 }
 
-// CollectionsGet gets details for a single collection (must be owned or shared).
-func (c *Client) CollectionsGet(ctx context.Context, id string) (*Collection, error) {
-	var resp Collection
+// CollectionsGet gets a single collection and its documents. The caller must
+// own the collection or it must be shared.
+func (c *Client) CollectionsGet(ctx context.Context, id string) (*CollectionDetail, error) {
+	var resp CollectionDetail
 	_, err := c.doJSON(ctx, "GET", "/qai/v1/rag/collections/"+id, nil, &resp)
 	if err != nil {
 		return nil, err
@@ -165,19 +163,8 @@ func (c *Client) CollectionsGet(ctx context.Context, id string) (*Collection, er
 
 // CollectionsDelete deletes a collection (owner only).
 func (c *Client) CollectionsDelete(ctx context.Context, id string) error {
-	var resp deleteCollectionResponse
-	_, err := c.doJSON(ctx, "DELETE", "/qai/v1/rag/collections/"+id, nil, &resp)
+	_, err := c.doJSON(ctx, "DELETE", "/qai/v1/rag/collections/"+id, nil, nil)
 	return err
-}
-
-// CollectionsDocuments lists documents in a collection.
-func (c *Client) CollectionsDocuments(ctx context.Context, collectionID string) ([]CollectionDocument, error) {
-	var resp collectionDocumentsResponse
-	_, err := c.doJSON(ctx, "GET", "/qai/v1/rag/collections/"+collectionID+"/documents", nil, &resp)
-	if err != nil {
-		return nil, err
-	}
-	return resp.Documents, nil
 }
 
 // CollectionsUpload uploads a file to a collection. The server handles the
@@ -236,11 +223,13 @@ func (c *Client) CollectionsUpload(ctx context.Context, collectionID, filename s
 	return &result, nil
 }
 
-// CollectionsSearch searches across collections (user's + shared) with
-// hybrid/semantic/keyword mode.
+// CollectionsSearch searches the requested collections, or every collection
+// the caller can read when req.CollectionIDs is empty, and returns the matched
+// chunks merged across collections, highest score first, capped at
+// req.MaxChunks.
 func (c *Client) CollectionsSearch(ctx context.Context, req *CollectionSearchRequest) ([]CollectionSearchResult, error) {
 	var resp collectionSearchResponse
-	_, err := c.doJSON(ctx, "POST", "/qai/v1/rag/search/collections", req, &resp)
+	_, err := c.doJSON(ctx, "POST", "/qai/v1/rag/collections/search", req, &resp)
 	if err != nil {
 		return nil, err
 	}

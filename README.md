@@ -292,7 +292,6 @@ for ev := range events {
 | Embeddings | 1 | Text embeddings |
 | RAG | 4 | Vertex AI + SurrealDB search |
 | Search | 2 | Web search, context |
-| Scraper | 2 | Doc scraping + screenshots |
 | Jobs | 3 | Async job management |
 | Compute | 7 | GPU/CPU rental (admin-approved accounts only) |
 | Keys | 3 | API key management |

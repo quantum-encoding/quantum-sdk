@@ -4,9 +4,20 @@
 
 The gateway retired user batch, document processing, search answers and the
 studio video route on 10 Nov 2026; each now answers 404. The SDK surface for
-them is gone.
+them is gone, along with four methods whose routes were already gone, and the
+RAG collection calls now speak the gateway's actual wire. Every path the SDK
+calls now matches a route the gateway registers.
 
 ### Removed (breaking)
+- `Scrape`, `Screenshot` and the types `ScrapeTarget`, `ScrapeRequest`,
+  `ScrapeResponse`, `ScreenshotURL`, `ScreenshotRequest`, `ScreenshotResult`,
+  `ScreenshotResponse`, `ScreenshotJobResponse`. The gateway retired
+  `/qai/v1/scraper/*` on 31 Aug 2026.
+- `ComputeBilling` and the types `BillingRequest`, `BillingResponse`,
+  `BillingEntry`. The gateway has never served `POST /qai/v1/compute/billing`.
+- `CollectionsDocuments`. The gateway has never served
+  `GET /qai/v1/rag/collections/{id}/documents`; `CollectionsGet` now returns a
+  collection's documents.
 - `BatchSubmit`, `BatchSubmitJsonl`, `BatchJobs`, `BatchJob` and the types
   `BatchJob`, `BatchJobInput`, `BatchSubmitRequest`, `BatchSubmitResponse`,
   `BatchJsonlResponse`, `BatchJobInfo`, `BatchJobsResponse`
@@ -30,6 +41,28 @@ them is gone.
   answers a generative one with a 400. `VideoPhotoAvatar` stays: send
   `PhotoBase64` and `Script` (both required), plus optional `VoiceID` and
   `AspectRatio`.
+
+### Fixed (breaking)
+- `CollectionsSearch` called `POST /qai/v1/rag/search/collections`, which does
+  not exist, so every call failed with a 404. It now calls
+  `POST /qai/v1/rag/collections/search`.
+- `CollectionSearchRequest` matches the body the gateway reads:
+  `MaxResults` (`max_results`) is now `MaxChunks` (`max_chunks`, default 10);
+  `Mode` is gone because the gateway has no search modes; `CollectionIDs` is
+  omitted when empty, which searches every collection the caller can read.
+- `CollectionSearchResult` matches what the gateway returns: `FileID` and
+  `Metadata`, which the gateway never sent, are gone; it adds `DocumentID`,
+  `Collection`, `Filename` and `IsShared`.
+- `CollectionsGet` returns `*CollectionDetail` (`Collection` plus
+  `Documents`). It returned `*Collection`, but the gateway wraps the record as
+  `{"collection": …, "documents": […]}`, so every field came back empty.
+- `CollectionDocument` matches the gateway's document record: `ID`,
+  `CollectionID`, `FileID`, `Filename`, `Status`, `Chunks`, `UploadedAt`. The
+  old fields (`Name`, `SizeBytes`, `ContentType`, `ProcessingStatus`,
+  `DocumentStatus`, `Indexed`, `CreatedAt`) were never sent.
+- `CollectionUploadResult` is now an alias of `CollectionDocument`, the record
+  `POST /qai/v1/rag/collections/{id}/upload` returns. `FileID` and `Filename`
+  are unchanged; `Bytes`, never sent, is gone.
 
 ## v0.9.0
 
