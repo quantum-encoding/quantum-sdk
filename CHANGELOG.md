@@ -63,6 +63,13 @@ calls now matches a route the gateway registers.
 - `CollectionUploadResult` is now an alias of `CollectionDocument`, the record
   `POST /qai/v1/rag/collections/{id}/upload` returns. `FileID` and `Filename`
   are unchanged; `Bytes`, never sent, is gone.
+- `VideoDigitalTwin` takes `*DigitalTwinCreateRequest` (`Name`, `VideoURL`,
+  optional `AvatarGroupID`) and returns `*DigitalTwinCreateResponse` (`Name`,
+  `ConsentURL`, `Model`, `GroupID`, `Status`, `ConsentStatus`, `AvatarID`,
+  `RequestID`). `POST /qai/v1/video/digital-twin` creates a twin from training
+  footage and answers synchronously. It never accepted the render-style
+  `DigitalTwinRequest` (`AvatarID`, `Script`, `VoiceID`, …) the method used
+  to send, and never returned a job; `DigitalTwinRequest` is gone.
 
 ## v0.9.0
 

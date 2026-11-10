@@ -126,37 +126,49 @@ type PhotoAvatarRequest struct {
 	AspectRatio string `json:"aspect_ratio,omitempty"`
 }
 
-// DigitalTwinRequest is the request body for digital twin video generation.
-type DigitalTwinRequest struct {
-	// AvatarID is the digital twin / avatar ID.
+// DigitalTwinCreateRequest is the request body for creating a digital twin
+// from training footage (POST /qai/v1/video/digital-twin). It trains an
+// avatar; it does not render a video.
+type DigitalTwinCreateRequest struct {
+	// Name is the display name for the twin (required).
+	Name string `json:"name"`
+
+	// VideoURL is a publicly fetchable URL of the training footage (required).
+	VideoURL string `json:"video_url"`
+
+	// AvatarGroupID adds the twin's look to an existing avatar group instead
+	// of creating a new one (optional).
+	AvatarGroupID string `json:"avatar_group_id,omitempty"`
+}
+
+// DigitalTwinCreateResponse is the response from creating a digital twin.
+// Creation is synchronous; it is not a job.
+type DigitalTwinCreateResponse struct {
+	// Name echoes the twin's name.
+	Name string `json:"name"`
+
+	// ConsentURL is the hosted HeyGen consent page for the person in the
+	// footage. Empty when the gateway could not obtain one.
+	ConsentURL string `json:"consent_url"`
+
+	// Model is the billing model label ("heygen-digital-twin").
+	Model string `json:"model"`
+
+	// GroupID is the avatar group holding the twin. Empty when HeyGen
+	// returned no group.
+	GroupID string `json:"group_id,omitempty"`
+
+	// Status is the group's training status.
+	Status string `json:"status,omitempty"`
+
+	// ConsentStatus is the group's consent status.
+	ConsentStatus string `json:"consent_status,omitempty"`
+
+	// AvatarID is the twin's look ID. Empty when HeyGen returned no look.
 	AvatarID string `json:"avatar_id,omitempty"`
 
-	// Script is the script text.
-	Script string `json:"script,omitempty"`
-
-	// VoiceID is the voice ID (uses twin's default voice if omitted).
-	VoiceID string `json:"voice_id,omitempty"`
-
-	// AspectRatio is the aspect ratio.
-	AspectRatio string `json:"aspect_ratio,omitempty"`
-
-	// VideoURL is the URL of the training video.
-	VideoURL string `json:"video_url,omitempty"`
-
-	// ConsentVideoURL is the URL of the consent video.
-	ConsentVideoURL string `json:"consent_video_url,omitempty"`
-
-	// Name is the digital twin name.
-	Name string `json:"name,omitempty"`
-
-	// Description describes the digital twin.
-	Description string `json:"description,omitempty"`
-
-	// AvatarGroupID is the avatar group to add the twin to.
-	AvatarGroupID string `json:"avatar_group_id,omitempty"`
-
-	// CallbackURL is a webhook URL for completion notification.
-	CallbackURL string `json:"callback_url,omitempty"`
+	// RequestID is the unique request identifier.
+	RequestID string `json:"request_id"`
 }
 
 // HeyGenAvatarsResponse is the response from listing HeyGen avatars.
@@ -208,13 +220,18 @@ func (c *Client) VideoPhotoAvatar(ctx context.Context, req *PhotoAvatarRequest) 
 	return &resp, nil
 }
 
-// VideoDigitalTwin submits a digital twin creation job.
-// Returns a job that should be polled for completion.
-func (c *Client) VideoDigitalTwin(ctx context.Context, req *DigitalTwinRequest) (*JobAcceptedResponse, error) {
-	var resp JobAcceptedResponse
-	_, err := c.doJSON(ctx, "POST", "/qai/v1/video/digital-twin", req, &resp)
+// VideoDigitalTwin creates a digital twin from training footage at
+// req.VideoURL. The gateway bills a flat fee once HeyGen accepts the footage;
+// a rejected request is not charged. The response carries the consent page
+// for the person in the footage.
+func (c *Client) VideoDigitalTwin(ctx context.Context, req *DigitalTwinCreateRequest) (*DigitalTwinCreateResponse, error) {
+	var resp DigitalTwinCreateResponse
+	meta, err := c.doJSON(ctx, "POST", "/qai/v1/video/digital-twin", req, &resp)
 	if err != nil {
 		return nil, err
+	}
+	if resp.RequestID == "" {
+		resp.RequestID = meta.RequestID
 	}
 	return &resp, nil
 }
