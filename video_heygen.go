@@ -2,36 +2,6 @@ package qai
 
 import "context"
 
-// StudioClip is a clip in a studio video.
-type StudioClip struct {
-	// AvatarID is the avatar ID.
-	AvatarID string `json:"avatar_id,omitempty"`
-
-	// VoiceID is the voice ID.
-	VoiceID string `json:"voice_id,omitempty"`
-
-	// Script is the script text for this clip.
-	Script string `json:"script,omitempty"`
-
-	// Background is the background settings.
-	Background any `json:"background,omitempty"`
-}
-
-// StudioVideoRequest is the request body for HeyGen studio video creation.
-type StudioVideoRequest struct {
-	// Title is the video title.
-	Title string `json:"title,omitempty"`
-
-	// Clips is the video clips.
-	Clips []StudioClip `json:"clips"`
-
-	// Dimension is the video dimensions.
-	Dimension string `json:"dimension,omitempty"`
-
-	// AspectRatio is the aspect ratio.
-	AspectRatio string `json:"aspect_ratio,omitempty"`
-}
-
 // TranslateRequest is the request body for video translation.
 type TranslateRequest struct {
 	// VideoURL is the URL of the video to translate.
@@ -108,19 +78,6 @@ type HeyGenVoice struct {
 	Extra map[string]any `json:"extra,omitempty"`
 }
 
-// VideoStudioRequest is the request body for creating a HeyGen talking-head video.
-// This is a long-running operation routed through the async job system.
-type VideoStudioRequest struct {
-	// AvatarID is the HeyGen avatar to use (required).
-	AvatarID string `json:"avatar_id"`
-
-	// Script is the text for the avatar to speak (required).
-	Script string `json:"script"`
-
-	// VoiceID is the voice for the avatar (required).
-	VoiceID string `json:"voice_id"`
-}
-
 // JobAcceptedResponse is the response for async job endpoints.
 // The client should poll the job status using GetJob.
 type JobAcceptedResponse struct {
@@ -152,43 +109,21 @@ type VideoTranslateRequest struct {
 	Title string `json:"title,omitempty"`
 }
 
-// PhotoAvatarRequest is the request body for creating a photo avatar video.
+// PhotoAvatarRequest is the request body for a talking-photo video: a photo
+// animated speaking a script. The gateway rejects a body missing either
+// PhotoBase64 or Script with a 400.
 type PhotoAvatarRequest struct {
-	// PhotoBase64 is the base64-encoded photo.
-	PhotoBase64 string `json:"photo_base64,omitempty"`
+	// PhotoBase64 is the base64-encoded photo (required).
+	PhotoBase64 string `json:"photo_base64"`
 
-	// Script is the script text for the avatar to speak.
-	Script string `json:"script,omitempty"`
+	// Script is the text the photo speaks (required).
+	Script string `json:"script"`
 
-	// VoiceID is the voice ID.
+	// VoiceID is the voice that reads the script (optional).
 	VoiceID string `json:"voice_id,omitempty"`
 
-	// AspectRatio is the aspect ratio.
+	// AspectRatio is the output aspect ratio (optional).
 	AspectRatio string `json:"aspect_ratio,omitempty"`
-
-	// Name is the avatar name.
-	Name string `json:"name,omitempty"`
-
-	// Age is the target age (e.g. "young", "middle-aged").
-	Age string `json:"age,omitempty"`
-
-	// Gender is the avatar gender.
-	Gender string `json:"gender,omitempty"`
-
-	// Ethnicity is the avatar ethnicity.
-	Ethnicity string `json:"ethnicity,omitempty"`
-
-	// Orientation is the face orientation.
-	Orientation string `json:"orientation,omitempty"`
-
-	// Pose is the avatar pose.
-	Pose string `json:"pose,omitempty"`
-
-	// Style is the visual style.
-	Style string `json:"style,omitempty"`
-
-	// Appearance describes the desired appearance.
-	Appearance string `json:"appearance,omitempty"`
 }
 
 // DigitalTwinRequest is the request body for digital twin video generation.
@@ -251,17 +186,6 @@ type HeyGenVoicesResponse struct {
 	RequestID string `json:"request_id"`
 }
 
-// VideoStudio creates a HeyGen talking-head video.
-// Returns a job that should be polled for completion.
-func (c *Client) VideoStudio(ctx context.Context, req *VideoStudioRequest) (*JobAcceptedResponse, error) {
-	var resp JobAcceptedResponse
-	_, err := c.doJSON(ctx, "POST", "/qai/v1/video/studio", req, &resp)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 // VideoTranslate submits a video for translation into another language.
 // Returns a job that should be polled for completion.
 func (c *Client) VideoTranslate(ctx context.Context, req *VideoTranslateRequest) (*JobAcceptedResponse, error) {
@@ -273,8 +197,8 @@ func (c *Client) VideoTranslate(ctx context.Context, req *VideoTranslateRequest)
 	return &resp, nil
 }
 
-// VideoPhotoAvatar submits a photo avatar creation job.
-// Returns a job that should be polled for completion.
+// VideoPhotoAvatar submits a talking-photo job: the photo in req animated
+// speaking req.Script. Returns a job that should be polled for completion.
 func (c *Client) VideoPhotoAvatar(ctx context.Context, req *PhotoAvatarRequest) (*JobAcceptedResponse, error) {
 	var resp JobAcceptedResponse
 	_, err := c.doJSON(ctx, "POST", "/qai/v1/video/photo-avatar", req, &resp)

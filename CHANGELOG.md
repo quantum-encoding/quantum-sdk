@@ -1,5 +1,36 @@
 # Changelog
 
+## Unreleased
+
+The gateway retired user batch, document processing, search answers and the
+studio video route on 10 Nov 2026; each now answers 404. The SDK surface for
+them is gone.
+
+### Removed (breaking)
+- `BatchSubmit`, `BatchSubmitJsonl`, `BatchJobs`, `BatchJob` and the types
+  `BatchJob`, `BatchJobInput`, `BatchSubmitRequest`, `BatchSubmitResponse`,
+  `BatchJsonlResponse`, `BatchJobInfo`, `BatchJobsResponse`
+  (`POST /qai/v1/batch`, `POST /qai/v1/batch/jsonl`, `GET /qai/v1/batch/jobs`,
+  `GET /qai/v1/batch/jobs/{id}`). HeyGen batch videos (`VideoBatchSubmit`,
+  `VideoBatchStatus`) are unaffected.
+- `ExtractDocument`, `ChunkDocument`, `ProcessDocument` and the types
+  `DocumentRequest`, `DocumentResponse`, `ChunkDocumentRequest`,
+  `ChunkDocumentResponse`, `ProcessDocumentRequest`, `ProcessDocumentResponse`,
+  `DocumentChunk`, `ChunkRequest`, `ChunkResponse`, `ProcessRequest`,
+  `ProcessResponse` (`POST /qai/v1/documents/extract`, `/chunk`, `/process`).
+- `SearchAnswer` and the types `SearchMessage`, `SearchAnswerResponse`,
+  `SearchAnswerChoice`, `SearchAnswerMessage`, `SearchAnswerRequest`,
+  `SearchAnswerCitation` (`POST /qai/v1/search/answer`). `WebSearch` and
+  `SearchContext` remain; `Citation` remains for `ChatResponse.Citations`.
+- `VideoStudio` and the types `VideoStudioRequest`, `StudioVideoRequest`,
+  `StudioClip` (`POST /qai/v1/video/studio`).
+- `PhotoAvatarRequest` loses the generative-avatar fields `Name`, `Age`,
+  `Gender`, `Ethnicity`, `Orientation`, `Pose`, `Style` and `Appearance`.
+  `POST /qai/v1/video/photo-avatar` now takes only the talking-photo body and
+  answers a generative one with a 400. `VideoPhotoAvatar` stays: send
+  `PhotoBase64` and `Script` (both required), plus optional `VoiceID` and
+  `AspectRatio`.
+
 ## v0.9.0
 
 The TTS request catches up with the gateway: a house voice you do not have to

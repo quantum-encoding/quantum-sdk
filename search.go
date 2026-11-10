@@ -42,15 +42,6 @@ type ContextOptions struct {
 	Freshness string `json:"freshness,omitempty"`
 }
 
-// SearchMessage is a message in a search-answer conversation.
-type SearchMessage struct {
-	// Role is "user" or "assistant".
-	Role string `json:"role"`
-
-	// Content is the message text.
-	Content string `json:"content"`
-}
-
 // ---------------------------------------------------------------------------
 // Canonical request/response types (sdk-graph parity)
 // ---------------------------------------------------------------------------
@@ -136,36 +127,6 @@ type SearchContextResponse struct {
 	Query string `json:"query"`
 }
 
-// SearchAnswerMessage is a chat message for the search answer endpoint.
-type SearchAnswerMessage struct {
-	// Role is the message role ("user", "assistant", "system").
-	Role string `json:"role"`
-
-	// Content is the message text content.
-	Content string `json:"content"`
-}
-
-// SearchAnswerRequest is the request body for search answer.
-type SearchAnswerRequest struct {
-	// Messages is the conversation messages.
-	Messages []SearchAnswerMessage `json:"messages"`
-
-	// Model is the model to use for answer generation.
-	Model string `json:"model,omitempty"`
-}
-
-// SearchAnswerCitation is a citation reference in a search answer.
-type SearchAnswerCitation struct {
-	// URL is the source URL.
-	URL string `json:"url"`
-
-	// Title is the source title.
-	Title string `json:"title"`
-
-	// Snippet is the snippet from the source.
-	Snippet string `json:"snippet,omitempty"`
-}
-
 // InfoboxResult is an infobox (knowledge panel) result.
 type InfoboxResult struct {
 	// Title is the infobox title.
@@ -228,11 +189,6 @@ type contextSearchRequest struct {
 	Country   string `json:"country,omitempty"`
 	Language  string `json:"language,omitempty"`
 	Freshness string `json:"freshness,omitempty"`
-}
-
-type searchAnswerRequest struct {
-	Messages []SearchMessage `json:"messages"`
-	Model    string          `json:"model"`
 }
 
 // ---------------------------------------------------------------------------
@@ -339,35 +295,7 @@ type ContextChunk struct {
 	ContentType string  `json:"content_type,omitempty"`
 }
 
-// SearchAnswerResponse is the response from a search-answer request.
-type SearchAnswerResponse struct {
-	// ID is the unique request identifier.
-	ID string `json:"id"`
-
-	// Model is the model that generated the answer.
-	Model string `json:"model"`
-
-	// Choices contains the generated answers.
-	Choices []SearchAnswerChoice `json:"choices"`
-
-	// Citations are the sources referenced in the answer.
-	Citations []Citation `json:"citations,omitempty"`
-
-	// CostTicks is the total cost from the X-QAI-Cost-Ticks header.
-	CostTicks int64 `json:"-"`
-
-	// RequestID is from the X-QAI-Request-Id header.
-	RequestID string `json:"-"`
-}
-
-// SearchAnswerChoice is a single answer choice.
-type SearchAnswerChoice struct {
-	Index        int           `json:"index"`
-	Message      SearchMessage `json:"message"`
-	FinishReason string        `json:"finish_reason"`
-}
-
-// Citation is a source referenced in a search answer.
+// Citation is a web source a model cited, as carried on ChatResponse.Citations.
 type Citation struct {
 	URL     string `json:"url"`
 	Title   string `json:"title"`
@@ -429,32 +357,6 @@ func (c *Client) SearchContext(ctx context.Context, query string, opts *ContextO
 
 	resp.CostTicks = meta.CostTicks
 	resp.RequestID = meta.RequestID
-
-	return &resp, nil
-}
-
-// SearchAnswer generates an AI answer grounded in web search results.
-//
-//	answer, err := client.SearchAnswer(ctx, []qai.SearchMessage{
-//	    {Role: "user", Content: "What is the latest Go version?"},
-//	}, "grok-3-mini")
-func (c *Client) SearchAnswer(ctx context.Context, messages []SearchMessage, model string) (*SearchAnswerResponse, error) {
-	reqBody := searchAnswerRequest{
-		Messages: messages,
-		Model:    model,
-	}
-
-	var resp SearchAnswerResponse
-	meta, err := c.doJSON(ctx, "POST", "/qai/v1/search/answer", reqBody, &resp)
-	if err != nil {
-		return nil, err
-	}
-
-	resp.CostTicks = meta.CostTicks
-	resp.RequestID = meta.RequestID
-	if resp.Model == "" {
-		resp.Model = meta.Model
-	}
 
 	return &resp, nil
 }
